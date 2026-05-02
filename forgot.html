@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vetlia - Recuperar contraseña</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+    }
+
+    .card {
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 340px;
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    /* 🐶🐱 LOGO */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    .logo-container img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      transition: 0.3s;
+    }
+
+    .logo-container img:hover {
+      transform: scale(1.2);
+    }
+
+    h2 {
+      margin-bottom: 5px;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 85%;
+      margin: 10px auto;
+      display: block;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #4facfe;
+      outline: none;
+      box-shadow: 0 0 8px rgba(79,172,254,0.4);
+      transform: scale(1.03);
+    }
+
+    button {
+      width: 70%;
+      padding: 10px;
+      background: #ffc107;
+      color: black;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e0a800;
+      transform: scale(1.05);
+    }
+
+    .mensaje {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success { color: green; }
+    .error { color: red; }
+
+    .links {
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    .links a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      color: white;
+      background: rgba(0,0,0,0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="main">
+    <div class="card">
+
+      <!-- 🐶🐱 LOGO -->
+      <div class="logo-container">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png">
+      </div>
+
+      <h2>Recuperar contraseña</h2>
+      <p>Ingresa tu correo para recibir el enlace</p>
+
+      <input type="email" id="correo" placeholder="Correo electrónico">
+
+      <button onclick="enviar()">Enviar enlace</button>
+
+      <div id="mensaje" class="mensaje"></div>
+
+      <div class="links">
+        <a href="login_test.html">← Volver al login</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Vetlia 🐾 - Sistema de gestión veterinaria
+  </footer>
+
+  <script>
+    async function enviar() {
+      const correo = document.getElementById("correo").value;
+      const mensaje = document.getElementById("mensaje");
+
+      mensaje.innerHTML = "Enviando...";
+      mensaje.className = "mensaje";
+
+      try {
+        const res = await fetch("http://localhost/vetlia/enviar_reset.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: "correo=" + encodeURIComponent(correo)
+        });
+
+        const text = await res.text();
+
+        if (text.includes("Correo enviado")) {
+          mensaje.innerHTML = "✅ Revisa tu correo 📧";
+          mensaje.className = "mensaje success";
+        } else {
+          mensaje.innerHTML = "❌ " + text;
+          mensaje.className = "mensaje error";
+        }
+
+      } catch (error) {
+        mensaje.innerHTML = "❌ Error de conexión";
+        mensaje.className = "mensaje error";
+      }
+    }
+  </script>
+
+</body>
+</html>

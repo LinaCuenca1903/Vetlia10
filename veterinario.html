@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<meta charset="UTF-8">
+<title>Vetlia - Veterinario</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:linear-gradient(135deg,#eef2f7,#dfe9f3);
+}
+
+.header{
+  background:linear-gradient(90deg,#2a5298,#1e3c72);
+  color:white;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.menu{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  background:white;
+}
+
+.menu button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.menu button:hover{
+  background:#2a5298;
+  color:white;
+}
+
+.content{ padding:20px; }
+
+input,select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  margin:5px 0;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#2a5298;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{ background:#1e3c72; }
+
+.card{
+  background:white;
+  padding:15px;
+  margin:10px 0;
+  border-radius:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.card-info{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.card-info img{ width:60px; }
+
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.dash-card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>Vetlia 🐾</h2>
+<div id="userNombre"></div>
+</div>
+
+<div class="menu">
+<button onclick="cargar('inicio')">Inicio</button>
+<button onclick="cargar('pacientes')">Pacientes</button>
+<button onclick="cargar('citas')">Citas</button>
+<button onclick="cargar('historias')">Historias</button>
+<button onclick="window.location='cotizaciones.html'">Cotizaciones</button>
+<button onclick="logout()">Salir</button>
+</div>
+
+<div class="content" id="contenido"></div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+if(!user) location="login_test.html";
+userNombre.innerText="👨‍⚕️ "+user.nombre;
+
+// ================= ESTADOS =================
+let mostrandoTutores = false;
+let mostrandoPacientes = false;
+let mostrandoCitas = false;
+
+// ================= ICONOS =================
+function getIcono(especie){
+if(!especie) return "";
+especie = especie.toLowerCase();
+
+if(especie.includes("gato"))
+return "https://cdn-icons-png.flaticon.com/512/616/616430.png";
+
+if(especie.includes("perro"))
+return "https://cdn-icons-png.flaticon.com/512/616/616408.png";
+
+return "https://cdn-icons-png.flaticon.com/512/616/616494.png";
+}
+
+// ================= MODULOS =================
+function cargar(m){
+
+if(m==="inicio"){
+contenido.innerHTML=`
+<h2>Bienvenido a Vetlia 🐾</h2>
+
+<div class="dashboard">
+<div class="dash-card" onclick="cargar('pacientes')">🐾 Pacientes</div>
+<div class="dash-card" onclick="cargar('citas')">📅 Citas</div>
+<div class="dash-card" onclick="cargar('historias')">📋 Historias</div>
+<div class="dash-card" onclick="window.location='cotizaciones.html'">💰 Cotizaciones</div>
+</div>`;
+}
+
+// ================= PACIENTES =================
+if(m==="pacientes"){
+contenido.innerHTML=`
+
+<h2>Tutores</h2>
+<button onclick="toggleTutores()">Ver / Ocultar</button>
+<div id="listaTutores"></div>
+
+<hr>
+
+<h2>Crear Tutor</h2>
+<input id="t_nombre" placeholder="Nombre">
+<input id="t_telefono" placeholder="Teléfono">
+<input id="t_direccion" placeholder="Dirección">
+<input id="t_email" placeholder="Correo">
+<button onclick="crearTutor()">Guardar</button>
+
+<hr>
+
+<h2>Pacientes</h2>
+<button onclick="togglePacientes()">Ver / Ocultar</button>
+<div id="listaPacientes"></div>
+
+<hr>
+
+<h2>Crear Paciente</h2>
+<input id="p_nombre" placeholder="Nombre">
+<input id="p_especie" placeholder="Perro / Gato">
+<input id="p_raza" placeholder="Raza">
+<input id="p_edad" placeholder="Edad">
+<select id="p_tutor"></select>
+<button onclick="crearPaciente()">Guardar</button>
+`;
+
+cargarTutoresSelect("p_tutor");
+}
+
+// ================= CITAS =================
+if(m==="citas"){
+contenido.innerHTML=`
+
+<h2>Agendar Cita</h2>
+
+<select id="c_mascota"></select>
+<input type="date" id="c_fecha">
+<input type="time" id="c_hora">
+<input id="c_motivo" placeholder="Motivo">
+
+<button onclick="crearCita()">Agendar</button>
+
+<hr>
+
+<h3>Calendario 📅</h3>
+<div id="calendar"></div>
+
+<hr>
+
+<h3>Filtrar por paciente 🔎</h3>
+<select id="filtro_mascota" onchange="filtrarCitas()"></select>
+
+<div id="listaCitas"></div>
+`;
+
+cargarMascotasSelect("c_mascota");
+cargarMascotasSelect("filtro_mascota");
+
+setTimeout(initCalendar,200);
+}
+
+// ================= HISTORIAS =================
+if(m==="historias"){
+contenido.innerHTML=`
+
+<h2>Nueva Historia</h2>
+
+<select id="h_mascota"></select>
+
+<input id="h_motivo" placeholder="Motivo de consulta">
+<input id="h_peso" placeholder="Peso (kg)">
+<input id="h_temp" placeholder="Temperatura (°C)">
+
+<input id="h_diag" placeholder="Diagnóstico">
+<input id="h_trat" placeholder="Tratamiento">
+
+<input id="h_obs" placeholder="Observaciones">
+<input type="date" id="h_control">
+
+<button onclick="crearHistoria()">Guardar</button>
+
+<hr>
+
+<h3>Historial por paciente</h3>
+<select id="hist_mascota" onchange="cargarHistorias()"></select>
+
+<div id="listaHistorias"></div>
+`;
+
+cargarMascotasSelect("h_mascota");
+cargarMascotasSelect("hist_mascota");
+}
+
+}
+
+// ================= TUTORES =================
+async function toggleTutores(){
+if(mostrandoTutores){
+listaTutores.innerHTML="";
+mostrandoTutores=false;
+return;
+}
+
+let r=await fetch("http://localhost/vetlia/get_tutores.php");
+let d=await r.json();
+
+listaTutores.innerHTML=d.map(t=>`
+<div class="card">
+<div class="card-info">
+<img src="https://cdn-icons-png.flaticon.com/512/194/194938.png">
+<div>
+<h3>${t.nombre}</h3>
+<p>${t.telefono}</p>
+<p>${t.email}</p>
+<p><b>Mascotas:</b> ${t.mascotas || "Sin mascotas"}</p>
+</div>
+</div>
+
+<div>
+<button onclick="editarTutor(${t.id}, '${t.nombre}', '${t.telefono}', '${t.direccion}', '${t.email}')">✏️</button>
+</div>
+
+</div>
+`).join("");
+
+mostrandoTutores=true;
+}
+
+// ================= PACIENTES =================
+async function togglePacientes(){
+
+if(mostrandoPacientes){
+listaPacientes.innerHTML="";
+mostrandoPacientes=false;
+return;
+}
+
+let r=await fetch("http://localhost/vetlia/get_pacientes.php");
+let d=await r.json();
+
+listaPacientes.innerHTML=d.map(p=>`
+<div class="card">
+
+<div class="card-info">
+<img src="${getIcono(p.especie)}">
+<div>
+<h3>${p.nombre}</h3>
+<p>${p.especie} - ${p.raza}</p>
+<p><b>Tutor:</b> ${p.tutor_nombre}</p>
+</div>
+</div>
+
+<div>
+<button onclick="irCitas(${p.id})">📅</button>
+<button onclick="irHistoria(${p.id})">📋</button>
+<button onclick='editarPaciente(${p.id}, ${JSON.stringify(p.nombre)}, ${JSON.stringify(p.especie)}, ${JSON.stringify(p.raza)}, ${JSON.stringify(p.edad)}, ${p.tutor_id})'>
+✏️ Editar
+</button>
+</div>
+
+</div>
+`).join("");
+
+mostrandoPacientes=true;
+}
+
+// ================= CITAS =================
+
+// 🔒 BLOQUEO DE HORAS
+async function crearCita(){
+
+if(!c_fecha.value || !c_hora.value){
+alert("Completa fecha y hora");
+return;
+}
+
+let res = await fetch("http://localhost/vetlia/crear_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+mascota_id:c_mascota.value,
+usuario_id:user.id,
+fecha:c_fecha.value,
+hora:c_hora.value,
+motivo:c_motivo.value
+})
+});
+
+//let r = await res.json();
+
+let txt = await res.text();
+console.log("RESPUESTA REAL:", txt);
+
+let r;
+try{
+r = JSON.parse(txt);
+}catch(e){
+alert("❌ El servidor NO está devolviendo JSON válido");
+return;
+}
+
+if(r.success){
+alert("Cita creada ✅");
+
+// limpiar campos
+c_fecha.value="";
+c_hora.value="";
+c_motivo.value="";
+filtro_mascota.value="all";
+
+cargarCitas();
+
+}else{
+alert("Error: " + (r.error || "No se pudo crear la cita"));
+}
+
+} // 🔥 ESTE CIERRE FALTABA
+
+// 🔎 FILTRO LIMPIO
+function filtrarCitas(){
+listaCitas.innerHTML="";
+cargarCitas();
+}
+
+// 👁️ TOGGLE CITAS
+function toggleCitas(){
+
+if(mostrandoCitas){
+listaCitas.innerHTML="";
+mostrandoCitas=false;
+return;
+}
+
+cargarCitas();
+mostrandoCitas=true;
+}
+
+// 📅 CARGAR CITAS
+async function cargarCitas(){
+
+listaCitas.innerHTML="";
+
+let id = filtro_mascota.value;
+
+let url = "http://localhost/vetlia/get_citas.php";
+
+if(id && id !== "all"){
+url += "?mascota_id=" + id;
+}
+
+let r = await fetch(url);
+let d = await r.json();
+
+if(!d || d.length===0){
+listaCitas.innerHTML="<p>No hay citas</p>";
+return;
+}
+
+let html = "";
+
+d.forEach(c=>{
+html += `
+<div class="card">
+<div class="card-info">
+<img src="${getIcono(c.especie)}">
+<div>
+<h3>${c.paciente}</h3>
+<p>${c.fecha} - ${c.hora}</p>
+<p>${c.motivo}</p>
+<p><b>${c.estado}</b></p>
+<button onclick="cambiarEstado(${c.id}, 'Confirmada')">✅</button>
+<button onclick="cambiarEstado(${c.id}, 'Cancelada')">❌</button>
+<button onclick="enviarCorreoCita(${c.id})">📧 Enviar correo</button>
+</div>
+</div>
+</div>
+`;
+});
+
+listaCitas.innerHTML = html;
+}
+
+// ================= HISTORIAS =================
+async function crearHistoria(){
+
+if(!h_mascota.value){
+alert("Selecciona paciente");
+return;
+}
+
+let res = await fetch("http://localhost/vetlia/crear_historia.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+mascota_id:h_mascota.value,
+usuario_id:user.id,
+motivo:h_motivo.value,
+peso:h_peso.value,
+temperatura:h_temp.value,
+diagnostico:h_diag.value,
+tratamiento:h_trat.value,
+observaciones:h_obs.value,
+proximo_control:h_control.value
+})
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Historia guardada 🐾");
+
+// limpiar
+h_motivo.value="";
+h_peso.value="";
+h_temp.value="";
+h_diag.value="";
+h_trat.value="";
+h_obs.value="";
+h_control.value="";
+
+cargarHistorias();
+
+}else{
+alert("Error: " + r.error);
+}
+}
+
+
+
+// 🔎 HISTORIAL LIMPIO
+async function cargarHistorias(){
+
+listaHistorias.innerHTML="";
+
+let id = hist_mascota.value;
+
+let r=await fetch("http://localhost/vetlia/get_historial_paciente.php?id="+id);
+let d=await r.json();
+
+listaHistorias.innerHTML=d.map(h=>`
+<div class="card">
+
+<div>
+<h3>📅 ${h.fecha}</h3>
+
+<p><b>Motivo:</b> ${h.motivo}</p>
+<p><b>Peso:</b> ${h.peso || "-"} kg</p>
+<p><b>Temp:</b> ${h.temperatura || "-"} °C</p>
+
+<p><b>Diagnóstico:</b> ${h.diagnostico}</p>
+<p><b>Tratamiento:</b> ${h.tratamiento}</p>
+
+<p><b>Obs:</b> ${h.observaciones || "-"}</p>
+<p><b>Control:</b> ${h.proximo_control || "-"}</p>
+</div>
+
+<div>
+<button onclick="editarHistoria(${h.id})">✏️</button>
+<button onclick="eliminarHistoria(${h.id})">🗑️</button>
+</div>
+
+</div>
+`).join("");
+}
+
+// ================= GENERALES =================
+
+// SELECT CON "TODOS"
+async function cargarMascotasSelect(id, incluirTodos=false){
+
+let r=await fetch("http://localhost/vetlia/get_pacientes.php");
+let d=await r.json();
+
+let html = incluirTodos ? `<option value="all">Todos</option>` : "";
+
+html += d.map(m=>`<option value="${m.id}">${m.nombre}</option>`).join("");
+
+document.getElementById(id).innerHTML = html;
+}
+
+async function cargarTutoresSelect(id){
+let r=await fetch("http://localhost/vetlia/get_tutores.php");
+let d=await r.json();
+document.getElementById(id).innerHTML=d.map(t=>`<option value="${t.id}">${t.nombre}</option>`).join("");
+}
+
+let calendar;
+
+async function initCalendar(){
+
+let r = await fetch("http://localhost/vetlia/get_citas.php");
+let citas = await r.json();
+
+let eventos = citas.map(c => ({
+    title: c.paciente + " 🐾",
+    start: c.fecha + "T" + c.hora
+}));
+
+let calendarEl = document.getElementById('calendar');
+
+calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    locale: 'es',
+    height: 500,
+    events: eventos
+});
+
+calendar.render();
+}
+
+function irCitas(id){
+cargar('citas');
+setTimeout(()=>{
+document.getElementById("filtro_mascota").value=id;
+filtrarCitas();
+},500);
+}
+
+function irHistoria(id){
+cargar('historias');
+setTimeout(()=>{
+document.getElementById("hist_mascota").value=id;
+cargarHistorias();
+},500);
+}
+
+// ================= CREAR TUTOR =================
+async function crearTutor(){
+
+let data = {
+nombre: document.getElementById("t_nombre").value,
+telefono: document.getElementById("t_telefono").value,
+direccion: document.getElementById("t_direccion").value,
+email: document.getElementById("t_email").value
+};
+
+let res = await fetch("http://localhost/vetlia/crear_tutor.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify(data)
+});
+
+let txt = await res.text();
+console.log("Respuesta tutor:", txt);
+
+try{
+let json = JSON.parse(txt);
+
+if(json.success){
+alert("Tutor guardado ✅");
+
+// limpiar campos
+t_nombre.value="";
+t_telefono.value="";
+t_direccion.value="";
+t_email.value="";
+
+// refrescar lista si está abierta
+if(mostrandoTutores) toggleTutores(), toggleTutores();
+
+}else{
+alert("Error: " + json.error);
+}
+
+}catch(e){
+alert("Error servidor (ver consola)");
+}
+}
+
+// ================= CREAR PACIENTE =================
+async function crearPaciente(){
+
+let data = {
+nombre: document.getElementById("p_nombre").value,
+especie: document.getElementById("p_especie").value,
+raza: document.getElementById("p_raza").value,
+edad: document.getElementById("p_edad").value,
+tutor_id: document.getElementById("p_tutor").value
+};
+
+let res = await fetch("http://localhost/vetlia/crear_paciente.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify(data)
+});
+
+let txt = await res.text();
+console.log("Respuesta paciente:", txt);
+
+try{
+let json = JSON.parse(txt);
+
+if(json.success){
+alert("Paciente guardado ✅");
+
+// limpiar campos
+p_nombre.value="";
+p_especie.value="";
+p_raza.value="";
+p_edad.value="";
+
+// refrescar lista si está abierta
+if(mostrandoPacientes) togglePacientes(), togglePacientes();
+
+}else{
+alert("Error: " + json.error);
+}
+
+}catch(e){
+alert("Error servidor (ver consola)");
+}
+}
+async function editarTutor(id, nombre, telefono, direccion, email){
+
+let nuevoNombre = prompt("Nombre:", nombre);
+if(!nuevoNombre) return;
+
+let nuevoTel = prompt("Teléfono:", telefono);
+let nuevaDir = prompt("Dirección:", direccion);
+let nuevoEmail = prompt("Correo:", email);
+
+let res = await fetch("http://localhost/vetlia/editar_tutor.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+id:id,
+nombre:nuevoNombre,
+telefono:nuevoTel,
+direccion:nuevaDir,
+email:nuevoEmail
+})
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Tutor actualizado ✅");
+
+if(mostrandoTutores){
+toggleTutores();
+toggleTutores();
+}
+
+}else{
+alert("Error al actualizar");
+}
+}
+async function editarPaciente(id, nombre, especie, raza, edad){
+
+let nuevoNombre = prompt("Nombre:", nombre);
+if(nuevoNombre === null) return;
+
+let nuevaEspecie = prompt("Especie:", especie);
+if(nuevaEspecie === null) return;
+
+let nuevaRaza = prompt("Raza:", raza);
+if(nuevaRaza === null) return;
+
+let nuevaEdad = prompt("Edad:", edad);
+if(nuevaEdad === null) return;
+
+let res = await fetch("http://localhost/vetlia/editar_paciente_vet.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+id:id,
+nombre:nuevoNombre,
+especie:nuevaEspecie,
+raza:nuevaRaza,
+edad:nuevaEdad
+})
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Paciente actualizado ✅");
+
+if(mostrandoPacientes){
+togglePacientes();
+togglePacientes();
+}
+
+}else{
+alert("Error: " + (r.error || "No se pudo actualizar"));
+}
+}
+
+async function cambiarEstado(id, estado){
+
+let res = await fetch("http://localhost/vetlia/cambiar_estado_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+id:id,
+estado:estado
+})
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Estado actualizado ✅");
+
+// refrescar citas
+cargarCitas();
+
+}else{
+alert("Error al actualizar estado");
+}
+}
+
+async function enviarCorreoCita(id){
+
+let res = await fetch("http://localhost/vetlia/enviar_correo_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({ id:id })
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Correo enviado 📧");
+}else{
+alert("Error: " + (r.error || "No se pudo enviar"));
+}
+
+}
+
+// ✏️ EDITAR HISTORIA
+async function editarHistoria(id, diag, trat){
+
+let nuevoDiag = prompt("Diagnóstico:", diag);
+if(nuevoDiag === null) return;
+
+let nuevoTrat = prompt("Tratamiento:", trat);
+if(nuevoTrat === null) return;
+
+let res = await fetch("http://localhost/vetlia/editar_historia.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+id:id,
+diagnostico:nuevoDiag,
+tratamiento:nuevoTrat
+})
+});
+
+let r = await res.json();
+
+if(r.success){
+alert("Historia actualizada ✅");
+cargarHistorias();
+}else{
+alert("Error: " + (r.error || "No se pudo editar"));
+}
+}
+
+
+async function eliminarHistoria(id){
+
+if(!confirm("¿Eliminar historia?")) return;
+
+let res = await fetch("http://localhost/vetlia/eliminar_historia.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({ id:id })
+});
+
+// 🔥 VER RESPUESTA REAL
+let txt = await res.text();
+console.log("RESPUESTA ELIMINAR:", txt);
+
+let r;
+try{
+r = JSON.parse(txt);
+}catch(e){
+alert("❌ El servidor NO está devolviendo JSON");
+return;
+}
+
+if(r.success){
+alert("Historia eliminada 🗑️");
+cargarHistorias();
+}else{
+alert("Error: " + (r.error || "No se pudo eliminar"));
+}
+}
+// ================= LOGOUT =================
+function logout(){
+localStorage.removeItem("user");
+location="login_test.html";
+}
+
+cargar("inicio");
+
+</script>
+</body>
+</html>

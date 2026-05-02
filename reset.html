@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vetlia - Nueva contraseña</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+    }
+
+    .card {
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 340px;
+      text-align: center;
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .logo-container img {
+      width: 35px;
+    }
+
+    input {
+      width: 85%;
+      margin: 10px auto;
+      display: block;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 70%;
+      padding: 10px;
+      background: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .mensaje {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .success { color: green; }
+    .error { color: red; }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="main">
+  <div class="card">
+
+    <div class="logo-container">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png">
+    </div>
+
+    <h2>Nueva contraseña</h2>
+
+    <input type="password" id="password" placeholder="Nueva contraseña">
+
+    <button onclick="reset()">Cambiar contraseña</button>
+
+    <div id="msg" class="mensaje"></div>
+
+  </div>
+</div>
+
+<footer>
+  © 2026 Vetlia 🐾
+</footer>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+async function reset() {
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
+
+  try {
+    const res = await fetch("http://localhost/vetlia/reset_password.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ token, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      msg.innerText = "✅ Contraseña actualizada";
+      msg.className = "mensaje success";
+    } else {
+      msg.innerText = "❌ " + data.error;
+      msg.className = "mensaje error";
+    }
+
+  } catch {
+    msg.innerText = "❌ Error de conexión";
+    msg.className = "mensaje error";
+  }
+}
+</script>
+
+</body>
+</html>

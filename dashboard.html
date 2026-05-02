@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Vetlia - Panel Admin</title>
+
+<style>
+body {
+  margin:0;
+  font-family:'Segoe UI';
+  display:flex;
+  background:#eef2f7;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width:230px;
+  height:100vh;
+  background:linear-gradient(180deg,#1e3c72,#2a5298);
+  color:white;
+  padding:20px;
+}
+.menu a {
+  display:block;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  cursor:pointer;
+}
+.menu a:hover { background:rgba(255,255,255,0.2); }
+
+/* CONTENIDO */
+.content { flex:1; padding:25px; }
+
+/* FORM */
+.form-group {
+  display:flex;
+  flex-direction:column;
+  margin-bottom:10px;
+}
+.form-group label {
+  font-size:13px;
+  color:#555;
+  margin-bottom:3px;
+}
+
+input, select {
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  outline:none;
+}
+input:focus { border-color:#2a5298; }
+
+/* BOTONES */
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#2a5298;
+  color:white;
+  cursor:pointer;
+}
+button:hover { background:#1e3c72; }
+
+/* TARJETAS */
+.user-card {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:white;
+  padding:15px 20px;
+  border-radius:12px;
+  margin:10px 0;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+.user-info {
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+.user-info img {
+  width:60px;
+  height:60px;
+}
+.user-info p {
+  margin:3px 0;
+  font-size:14px;
+}
+
+.user-actions button { margin-left:5px; }
+.btn-edit { background:#17a2b8; }
+.btn-delete { background:#dc3545; }
+
+/* MODAL */
+.modal {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+.modal-content {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  width:320px;
+}
+/* DASHBOARD */
+.dashboard {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+
+.dashboard-card {
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.dashboard-card:hover {
+  transform:translateY(-5px);
+}
+
+.dashboard-icon {
+  font-size:35px;
+}
+
+.dashboard-info h3 {
+  margin:0;
+  font-size:16px;
+  color:#555;
+}
+
+.dashboard-info p {
+  margin:0;
+  font-size:22px;
+  font-weight:bold;
+}
+
+/* HEADER PANEL */
+.panel-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.panel-header h2 {
+  margin:0;
+}
+
+.panel-sub {
+  color:#777;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>Vetlia 🐾</h2>
+  <div class="menu">
+    <a onclick="cargar('inicio')">🏠 Inicio</a>
+    <a onclick="cargar('usuarios')">👤 Usuarios</a>
+    <a onclick="cargar('pacientes')">🐾 Pacientes</a>
+    <a onclick="cargar('citas')">📅 Citas</a>
+    <a onclick="cargar('historias')">📋 Historias</a>
+    <a onclick="logout()">🚪 Salir</a>
+  </div>
+</div>
+
+<div class="content" id="contenido">
+  <h2 id="titulo"></h2>
+</div>
+
+<!-- MODALES (SIN CAMBIOS) -->
+<div class="modal" id="modalUsuario">
+<div class="modal-content">
+<h3>Editar Usuario</h3>
+<input id="editNombre">
+<input id="editEmail">
+<select id="editRol">
+<option value="admin">Admin</option>
+<option value="veterinario">Veterinario</option>
+</select>
+<button onclick="guardarUsuario()">Guardar</button>
+<button onclick="cerrarModal('modalUsuario')">Cancelar</button>
+</div>
+</div>
+
+<div class="modal" id="modalTutor">
+<div class="modal-content">
+<h3>Editar Tutor</h3>
+<input id="editTNombre">
+<input id="editTTelefono">
+<input id="editTDireccion">
+<input id="editTEmail">
+<button onclick="guardarTutor()">Guardar</button>
+<button onclick="cerrarModal('modalTutor')">Cancelar</button>
+</div>
+</div>
+
+<div class="modal" id="modalPaciente">
+<div class="modal-content">
+<h3>Editar Paciente</h3>
+<input id="editPNombre">
+<input id="editPEspecie">
+<input id="editPRaza">
+<input id="editPEdad">
+<select id="editPTutor"></select>
+<button onclick="guardarPaciente()">Guardar</button>
+<button onclick="cerrarModal('modalPaciente')">Cancelar</button>
+</div>
+</div>
+
+<!-- MODAL CITA -->
+<div class="modal" id="modalCita">
+<div class="modal-content">
+<h3>Editar Cita</h3>
+<input id="editCitaFecha" placeholder="Fecha">
+<input id="editCitaHora" placeholder="Hora">
+<input id="editCitaMotivo" placeholder="Motivo">
+<select id="editCitaEstado">
+<option>Pendiente</option>
+<option>Confirmada</option>
+<option>Cancelada</option>
+</select>
+<button onclick="guardarCita()">Guardar</button>
+<button onclick="cerrarModal('modalCita')">Cancelar</button>
+</div>
+</div>
+
+<!-- MODAL HISTORIA -->
+<div class="modal" id="modalHistoria">
+<div class="modal-content">
+<h3>Editar Historia</h3>
+<input id="editDiagnostico" placeholder="Diagnóstico">
+<input id="editTratamiento" placeholder="Tratamiento">
+<button onclick="guardarHistoria()">Guardar</button>
+<button onclick="cerrarModal('modalHistoria')">Cancelar</button>
+</div>
+</div>
+
+
+<script>
+
+// 🔐 sesión
+const user = JSON.parse(localStorage.getItem("user"));
+if(!user) location="login_test.html";
+if(user.rol !== "admin"){ alert("No autorizado"); location="login_test.html"; }
+
+titulo.innerText = "Bienvenido " + user.nombre;
+
+// ================= MODULOS =================
+function cargar(modulo){
+const c = contenido;
+
+if(modulo==="inicio"){
+c.innerHTML=`
+
+<div class="panel-header">
+  <div>
+    <h2>Panel de Control 🐾</h2>
+    <div class="panel-sub">Resumen general del sistema</div>
+  </div>
+</div>
+
+<div class="dashboard">
+
+  <div class="dashboard-card" onclick="cargar('usuarios')">
+    <div class="dashboard-info">
+      <h3>Usuarios</h3>
+      <p>Gestión</p>
+    </div>
+    <div class="dashboard-icon">👤</div>
+  </div>
+
+  <div class="dashboard-card" onclick="cargar('pacientes')">
+    <div class="dashboard-info">
+      <h3>Pacientes</h3>
+      <p>Veterinaria</p>
+    </div>
+    <div class="dashboard-icon">🐾</div>
+  </div>
+
+ </div>
+
+`;
+ 
+
+}
+
+// ================= USUARIOS =================
+if(modulo==="usuarios"){
+c.innerHTML=`
+<h2>Usuarios</h2>
+
+<div class="form-group">
+<label>Nombre</label>
+<input id="nombre" placeholder="Ej: Juan Pérez">
+</div>
+
+<div class="form-group">
+<label>Correo</label>
+<input id="email" placeholder="Ej: correo@vetlia.com">
+</div>
+
+<div class="form-group">
+<label>Contraseña</label>
+<input id="password" placeholder="Mínimo 6 caracteres">
+</div>
+
+<div class="form-group">
+<label>Rol</label>
+<select id="rol">
+<option value="admin">Admin</option>
+<option value="veterinario">Veterinario</option>
+</select>
+</div>
+
+<button onclick="crearUsuario()">Crear</button>
+<button onclick="cargarUsuarios()">Ver</button>
+
+<div id="listaUsuarios"></div>`;
+}
+
+// ================= PACIENTES =================
+if(modulo==="pacientes"){
+c.innerHTML=`
+
+<h2>Tutores</h2>
+
+<div class="form-group">
+<label>Nombre</label>
+<input id="t_nombre" placeholder="Ej: María Gómez">
+</div>
+
+<div class="form-group">
+<label>Teléfono</label>
+<input id="t_telefono" placeholder="Ej: 3001234567">
+</div>
+
+<div class="form-group">
+<label>Dirección</label>
+<input id="t_direccion" placeholder="Ej: Calle 10 #20-30">
+</div>
+
+<div class="form-group">
+<label>Correo</label>
+<input id="t_email" placeholder="Ej: correo@email.com">
+</div>
+
+<button onclick="crearTutor()">Crear Tutor</button>
+<button onclick="cargarTutoresLista()">Ver</button>
+<div id="listaTutores"></div>
+
+<hr>
+
+<h2>Pacientes</h2>
+
+<div class="form-group">
+<label>Nombre</label>
+<input id="p_nombre" placeholder="Nombre de la mascota">
+</div>
+
+<div class="form-group">
+<label>Especie</label>
+<input id="p_especie" placeholder="Perro / Gato">
+</div>
+
+<div class="form-group">
+<label>Raza</label>
+<input id="p_raza" placeholder="Ej: Labrador">
+</div>
+
+<div class="form-group">
+<label>Edad</label>
+<input id="p_edad" placeholder="Ej: 3">
+</div>
+
+<div class="form-group">
+<label>Tutor</label>
+<select id="p_tutor"></select>
+</div>
+
+<button onclick="crearPaciente()">Crear</button>
+<button onclick="cargarPacientes()">Ver</button>
+<div id="listaPacientes"></div>
+`;
+
+cargarTutoresSelect("p_tutor");
+}
+
+// ================= CITAS =================
+if(modulo==="citas"){
+c.innerHTML=`
+
+<h2>Gestión de Citas 📅</h2>
+
+<h3>Agendar Nueva Cita</h3>
+
+<div class="form-group">
+<label>Paciente</label>
+<select id="c_mascota"></select>
+</div>
+
+<div class="form-group">
+<label>Fecha</label>
+<input type="date" id="c_fecha">
+</div>
+
+<div class="form-group">
+<label>Hora</label>
+<input type="time" id="c_hora">
+</div>
+
+<div class="form-group">
+<label>Motivo</label>
+<input id="c_motivo" placeholder="Ej: Consulta general">
+</div>
+
+<button onclick="crearCita()">Agendar</button>
+<button onclick="cargarCitas()">Ver Citas</button>
+
+<div id="listaCitas"></div>
+`;
+
+cargarMascotasSelect();
+
+}
+
+// ================= HISTORIAS =================
+else if(modulo==="historias"){
+  c.innerHTML = `
+    <h2>Historias Clínicas 📋</h2>
+
+    <div class="form-group">
+      <label>Seleccionar mascota</label>
+      <select id="hist_mascota"></select>
+    </div>
+
+    <button onclick="cargarHistorias()">Ver Historias</button>
+
+    <div id="listaHistorias"></div>
+  `;
+
+  cargarMascotasSelect("hist_mascota");
+}
+}
+// ================= USUARIOS =================
+let userEditando=null;
+
+async function crearUsuario(){
+if(!nombre.value || !email.value || !password.value) return alert("Completa todo");
+
+let r=await fetch("http://localhost/vetlia/crear_usuario.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+nombre:nombre.value,email:email.value,password:password.value,rol:rol.value
+})});
+let d=await r.json();
+
+if(d.success){
+alert("Creado");
+nombre.value=email.value=password.value="";
+cargarUsuarios();
+}
+}
+
+async function cargarUsuarios(){
+let r=await fetch("http://localhost/vetlia/get_usuarios.php");
+let d=await r.json();
+
+listaUsuarios.innerHTML=d.map(u=>`
+<div class="user-card">
+<div class="user-info">
+<div>
+<p><b>Nombre:</b> ${u.nombre}</p>
+<p><b>Correo:</b> ${u.email}</p>
+<p><b>Rol:</b> ${u.rol}</p>
+</div>
+</div>
+<div class="user-actions">
+<button class="btn-edit" onclick="abrirUsuario(${u.id},'${u.nombre}','${u.email}','${u.rol}')">Editar</button>
+<button class="btn-delete" onclick="eliminarUsuario(${u.id})">Eliminar</button>
+</div>
+</div>`).join("");
+}
+
+function abrirUsuario(id,n,e,r){
+userEditando=id;
+editNombre.value=n;
+editEmail.value=e;
+editRol.value=r;
+modalUsuario.style.display="flex";
+}
+
+async function guardarUsuario(){
+if(!editNombre.value || !editEmail.value) return alert("Campos vacíos");
+
+let r=await fetch("http://localhost/vetlia/editar_usuario.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+id:userEditando,nombre:editNombre.value,email:editEmail.value,rol:editRol.value
+})});
+let d=await r.json();
+
+if(d.success){
+cerrarModal("modalUsuario");
+cargarUsuarios();
+}else alert("Error");
+}
+
+async function eliminarUsuario(id){
+if(!confirm("Eliminar?")) return;
+await fetch("http://localhost/vetlia/eliminar_usuario.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});
+cargarUsuarios();
+}
+
+// ================= TUTORES =================
+let tutorEditando=null;
+
+async function crearTutor(){
+let r=await fetch("http://localhost/vetlia/crear_tutor.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+nombre:t_nombre.value,telefono:t_telefono.value,direccion:t_direccion.value,email:t_email.value
+})});
+let d=await r.json();
+
+if(d.success){
+alert("Tutor creado");
+cargarTutoresLista();
+cargarTutoresSelect("p_tutor");
+}
+}
+
+async function cargarTutoresSelect(id){
+let r=await fetch("http://localhost/vetlia/get_tutores.php");
+let d=await r.json();
+document.getElementById(id).innerHTML=d.map(t=>`<option value="${t.id}">${t.nombre}</option>`).join("");
+}
+
+async function cargarTutoresLista(){
+let r=await fetch("http://localhost/vetlia/get_tutores.php");
+let d=await r.json();
+
+listaTutores.innerHTML=d.map(t=>`
+<div class="user-card">
+<div class="user-info">
+<div>
+<p><b>Nombre:</b> ${t.nombre}</p>
+<p><b>Teléfono:</b> ${t.telefono}</p>
+<p><b>Correo:</b> ${t.email}</p>
+<p><b>Dirección:</b> ${t.direccion}</p>
+</div>
+</div>
+<div class="user-actions">
+<button class="btn-edit" onclick="abrirTutor(${t.id},'${t.nombre}','${t.telefono}','${t.direccion}','${t.email}')">Editar</button>
+<button class="btn-delete" onclick="eliminarTutor(${t.id})">Eliminar</button>
+</div>
+</div>`).join("");
+}
+
+function abrirTutor(id,n,tel,dir,email){
+tutorEditando=id;
+editTNombre.value=n;
+editTTelefono.value=tel;
+editTDireccion.value=dir;
+editTEmail.value=email;
+modalTutor.style.display="flex";
+}
+
+async function guardarTutor(){
+if(!editTNombre.value){ alert("Nombre requerido"); return; }
+
+const res = await fetch("http://localhost/vetlia/editar_tutor.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+id:tutorEditando,
+nombre:editTNombre.value,
+telefono:editTTelefono.value,
+direccion:editTDireccion.value,
+email:editTEmail.value
+})
+});
+const data = JSON.parse(await res.text());
+
+if(data.success){
+alert("Tutor actualizado");
+cerrarModal("modalTutor");
+cargarTutoresLista();
+}else alert("Error");
+}
+
+async function eliminarTutor(id){
+if(!confirm("¿Eliminar tutor?")) return;
+
+const res = await fetch("http://localhost/vetlia/eliminar_tutor.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+});
+const data = JSON.parse(await res.text());
+
+if(data.success){
+alert("Eliminado");
+cargarTutoresLista();
+}else alert("Error");
+}
+
+// ================= PACIENTES =================
+let pacienteEditando=null;
+
+async function crearPaciente(){
+let r=await fetch("http://localhost/vetlia/crear_paciente.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+nombre:p_nombre.value,especie:p_especie.value,raza:p_raza.value,edad:p_edad.value,tutor_id:p_tutor.value
+})});
+let d=await r.json();
+
+if(d.success){
+alert("Paciente creado");
+cargarPacientes();
+}
+}
+
+async function cargarPacientes(){
+let r=await fetch("http://localhost/vetlia/get_pacientes.php");
+let d=await r.json();
+
+listaPacientes.innerHTML=d.map(p=>{
+let img="https://cdn-icons-png.flaticon.com/512/616/616408.png";
+if(p.especie.toLowerCase().includes("gato")){
+img="https://cdn-icons-png.flaticon.com/512/616/616430.png";
+}
+
+return `
+<div class="user-card">
+<div class="user-info">
+<img src="${img}">
+<div>
+<h4>${p.nombre}</h4>
+<p>${p.especie} - ${p.raza}</p>
+<p>Edad: ${p.edad}</p>
+<p><b>Tutor:</b> ${p.tutor_nombre}</p>
+</div>
+</div>
+<div class="user-actions">
+<button class="btn-edit" onclick="abrirPaciente(${p.id},'${p.nombre}','${p.especie}','${p.raza}','${p.edad}',${p.tutor_id})">Editar</button>
+<button class="btn-delete" onclick="eliminarPaciente(${p.id})">Eliminar</button>
+</div>
+</div>`;
+}).join("");
+}
+
+function abrirPaciente(id,n,e,r,edad,tutor){
+pacienteEditando=id;
+editPNombre.value=n;
+editPEspecie.value=e;
+editPRaza.value=r;
+editPEdad.value=edad;
+cargarTutoresSelect("editPTutor");
+setTimeout(()=>editPTutor.value=tutor,200);
+modalPaciente.style.display="flex";
+}
+
+async function guardarPaciente(){
+if(!editPNombre.value){ alert("Nombre requerido"); return; }
+
+const res = await fetch("http://localhost/vetlia/editar_paciente.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+id:pacienteEditando,
+nombre:editPNombre.value,
+especie:editPEspecie.value,
+raza:editPRaza.value,
+edad:editPEdad.value,
+tutor_id:editPTutor.value
+})
+});
+const data = JSON.parse(await res.text());
+
+if(data.success){
+alert("Paciente actualizado");
+cerrarModal("modalPaciente");
+cargarPacientes();
+}else alert("Error");
+}
+
+async function eliminarPaciente(id){
+if(!confirm("¿Eliminar paciente?")) return;
+
+const res = await fetch("http://localhost/vetlia/eliminar_paciente.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+});
+const data = JSON.parse(await res.text());
+
+if(data.success){
+alert("Eliminado");
+cargarPacientes();
+}else alert("Error");
+}
+
+// ================= GENERAL =================
+function cerrarModal(id){ document.getElementById(id).style.display="none"; }
+function logout(){ localStorage.removeItem("user"); location="login_test.html"; }
+
+// ================= CITAS =================
+
+let citaEditando=null;
+
+async function cargarCitas(){
+let r=await fetch("http://localhost/vetlia/get_citas.php");
+let d=await r.json();
+
+listaCitas.innerHTML=d.map(c=>`
+<div class="user-card">
+
+<div class="user-info">
+<div>
+<p><b>Paciente:</b> ${c.paciente}</p>
+<p><b>Fecha:</b> ${c.fecha}</p>
+<p><b>Motivo:</b> ${c.motivo}</p>
+<p><b>Estado:</b> ${c.estado}</p>
+</div>
+</div>
+
+<div class="user-actions">
+<button class="btn-edit" onclick="abrirCita(${c.id},'${c.fecha}','${c.hora}','${c.motivo}','${c.estado}')">Editar</button>
+<button class="btn-delete" onclick="cancelarCita(${c.id})">Cancelar</button>
+</div>
+
+</div>
+`).join("");
+}
+
+function abrirCita(id,fecha,hora,motivo,estado){
+citaEditando=id;
+editCitaFecha.value=fecha;
+editCitaHora.value=hora;
+editCitaMotivo.value=motivo;
+editCitaEstado.value=estado;
+modalCita.style.display="flex";
+
+}
+
+async function guardarCita(){
+let r=await fetch("http://localhost/vetlia/editar_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+id:citaEditando,
+fecha:editCitaFecha.value,
+hora:editCitaHora.value,
+motivo:editCitaMotivo.value,
+estado:editCitaEstado.value
+})
+});
+let d=await r.json();
+
+if(d.success){
+cerrarModal("modalCita");
+cargarCitas();
+}else alert("Error");
+}
+
+async function cancelarCita(id){
+if(!confirm("¿Cancelar cita?")) return;
+
+await fetch("http://localhost/vetlia/cancelar_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({id})
+});
+
+cargarCitas();
+}
+
+// ================= HISTORIAS =================
+
+let historiaEditando = null;
+
+async function cargarHistorias() {
+
+  const listaHistorias = document.getElementById("listaHistorias");
+  const hist_mascota = document.getElementById("hist_mascota");
+
+  listaHistorias.innerHTML = "Cargando...";
+
+  let id = hist_mascota.value;
+
+  if (!id) {
+    listaHistorias.innerHTML = "<p>Selecciona una mascota</p>";
+    return;
+  }
+
+  try {
+    let r = await fetch("http://localhost/vetlia/get_historial.php?id=" + id);
+    let d = await r.json();
+
+    console.log("HISTORIAS:", d);
+
+    if (!Array.isArray(d) || d.length === 0) {
+      listaHistorias.innerHTML = "<p>No hay historias para esta mascota</p>";
+      return;
+    }
+
+    listaHistorias.innerHTML = d.map(h => `
+      <div class="user-card">
+
+        <div>
+          <h3>📅 ${h.fecha}</h3>
+
+          <p><b>Diagnóstico:</b> ${h.diagnostico}</p>
+          <p><b>Tratamiento:</b> ${h.tratamiento}</p>
+          <p><b>Veterinario:</b> ${h.veterinario}</p>
+        </div>
+
+        <div>
+          <button onclick="editarHistoria(${h.id})">✏️</button>
+          <<button onclick="eliminarHistoria(${h.id})">🗑️</button>
+        </div>
+
+      </div>
+    `).join("");
+
+  } catch (e) {
+    console.error(e);
+    listaHistorias.innerHTML = "<p>Error al cargar historias</p>";
+  }
+};
+
+
+async function abrirHistoria(id) {
+  historiaEditando = id;
+
+  let r = await fetch("get_historial.php?id=" + id);
+  let h = await r.json();
+
+  editDiagnostico.value = h.diagnostico;
+  editTratamiento.value = h.tratamiento;
+
+  modalHistoria.style.display = "flex";
+}
+
+async function guardarHistoria(){
+let r=await fetch("http://localhost/vetlia/editar_historia.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+id:historiaEditando,
+diagnostico:editDiagnostico.value,
+tratamiento:editTratamiento.value
+})
+});
+let d=await r.json();
+
+if(d.success){
+cerrarModal("modalHistoria");
+cargarHistorias();
+}else alert("Error");
+}
+
+async function cargarMascotasSelect(idSelect = "c_mascota"){
+let r = await fetch("http://localhost/vetlia/get_pacientes.php");
+let d = await r.json();
+
+document.getElementById(idSelect).innerHTML = d.map(m =>
+`<option value="${m.id}">${m.nombre}</option>`
+).join("");
+
+}
+
+async function crearCita(){
+
+if(!c_fecha.value || !c_hora.value || !c_motivo.value){
+alert("Completa todos los campos");
+return;
+}
+
+let r = await fetch("http://localhost/vetlia/crear_cita.php",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+mascota_id: c_mascota.value,
+usuario_id: user.id,
+fecha: c_fecha.value,
+hora: c_hora.value,
+motivo: c_motivo.value
+})
+});
+
+let d = await r.json();
+
+if(d.success){
+alert("Cita agendada ✅");
+cargarCitas();
+}else{
+alert(d.error || "Error");
+}
+}
+
+async function eliminarHistoria(id){
+
+  if(!confirm("¿Eliminar historia clínica?")) return;
+
+  let r = await fetch("http://localhost/vetlia/eliminar_historia.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({id})
+  });
+
+  let d = await r.json();
+
+  if(d.success){
+    alert("Historia eliminada");
+    cargarHistorias(); // recarga lista
+  }else{
+    alert(d.error || "Error al eliminar");
+  }
+}
+async function editarHistoria(id){
+
+  historiaEditando = id;
+
+  try{
+
+    let r = await fetch("http://localhost/vetlia/get_historia_by_id.php?id=" + id);
+    let h = await r.json();
+
+    if(!h){
+      alert("Historia no encontrada");
+      return;
+    }
+
+    editDiagnostico.value = h.diagnostico || "";
+    editTratamiento.value = h.tratamiento || "";
+
+    modalHistoria.style.display = "flex";
+
+  }catch(e){
+    console.error(e);
+    alert("Error al cargar historia");
+  }
+}
+
+async function guardarHistoria(){
+
+  if(!historiaEditando){
+    alert("No hay historia seleccionada");
+    return;
+  }
+
+  if(!editDiagnostico.value || !editTratamiento.value){
+    alert("Completa todos los campos");
+    return;
+  }
+
+  try{
+
+    let r = await fetch("http://localhost/vetlia/editar_historia.php",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        id: historiaEditando,
+        diagnostico: editDiagnostico.value,
+        tratamiento: editTratamiento.value
+      })
+    });
+
+    let d = await r.json();
+
+    if(d.success){
+      alert("Historia actualizada correctamente");
+      cerrarModal("modalHistoria");
+      cargarHistorias();
+    }else{
+      alert(d.error || "Error al actualizar historia");
+    }
+
+  }catch(e){
+    console.error(e);
+    alert("Error de conexión con el servidor");
+  }
+}
+</script>
+
+</body>
+</html>
