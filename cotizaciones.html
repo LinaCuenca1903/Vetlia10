@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+
+<title>Cotizaciones - Vetlia</title>
+
+<link rel="stylesheet" href="cotizaciones.css">
+
+</head>
+
+<body>
+
+<h1>🧾 Cotizaciones Veterinarias</h1>
+
+<div class="top-section">
+
+    <select id="cot_mascota"
+            onchange="cargarCotizaciones()">
+
+        <option value="">
+            Seleccionar mascota
+        </option>
+
+    </select>
+
+    <button onclick="guardarCotizacion()">
+        Guardar Cotización
+    </button>
+
+    <select id="cot_estado">
+
+    <option value="pendiente">
+        Pendiente
+    </option>
+
+    <option value="aprobada">
+        Aprobada
+    </option>
+
+    <option value="rechazada">
+        Rechazada
+    </option>
+
+</select>
+
+</div>
+
+<h2>📦 Catálogo</h2>
+
+<div id="catalogoContainer"></div>
+
+<h2>🛒 Cotización</h2>
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody id="detalleCotizacion"></tbody>
+
+</table>
+
+<h2 id="totalCotizacion">
+    Total: $0
+</h2>
+<h2>📄 Historial Cotizaciones</h2>
+
+<div id="listaCotizaciones"></div>
+
+<script src="cotizaciones.js"></script>
+
+</body>
+</html>

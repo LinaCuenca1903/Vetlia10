@@ -12,14 +12,15 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .main {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex: 1;
+       display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  flex:1;
     }
 
     .card {
@@ -121,12 +122,60 @@
     .error { color: red; }
 
     footer {
-      text-align: center;
-      padding: 10px;
-      font-size: 12px;
-      color: white;
-      background: rgba(0,0,0,0.2);
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: white;
+    background: rgba(0,0,0,0.2);
+    border-radius:10px;
+    margin-top:20px;
+
     }
+
+    .extra-buttons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:15px;
+}
+
+.help-btn,
+.manual-btn{
+  width:auto !important;
+  padding:10px 18px;
+  border:none;
+  border-radius:15px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+  margin-top:0;
+
+}
+
+.extra-buttons button{
+  flex:none;
+}
+
+.help-btn{
+  background:#ff9800;
+  color:white;
+}
+
+.help-btn:hover{
+  background:#f57c00;
+  transform:translateY(-2px);
+}
+
+.manual-btn{
+  background:#6c63ff;
+  color:white;
+}
+
+.manual-btn:hover{
+  background:#574bdb;
+  transform:translateY(-2px);
+}
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
@@ -161,8 +210,24 @@
       <button id="btnLogin" onclick="login()">Iniciar sesión</button>
 
       <div class="links">
-        <a href="forgot.html">¿Olvidaste tu contraseña?</a>
-      </div>
+
+         </a>
+
+  <div class="extra-buttons">
+
+    <button class="help-btn"
+            onclick="abrirAyuda()">
+
+      🆘 Ayuda
+
+    </button>
+
+    
+
+  </div>
+
+        
+     
 
       <div id="mensaje" class="mensaje"></div>
 
@@ -234,6 +299,15 @@ async function login() {
   boton.disabled = false;
   boton.innerText = "Iniciar sesión";
 }
+
+function abrirAyuda(){
+window.open(
+    "ayuda.html",
+    "_blank"
+  );
+}
+
+
 </script>
 </body>
 </html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Catálogo Vetlia</title>
+
+  <link rel="stylesheet" href="catalogo.css">
+
+</head>
+
+<body>
+
+<h1>📦 Catálogo Veterinario</h1>
+
+<div class="form-grid">
+
+    <input type="text"
+           id="cat_nombre"
+           placeholder="Nombre">
+
+    <select id="cat_tipo">
+
+        <option value="producto">
+            Producto
+        </option>
+
+        <option value="medicina">
+            Medicina
+        </option>
+
+        <option value="servicio">
+            Servicio
+        </option>
+
+    </select>
+
+    <input type="number"
+           id="cat_precio"
+           placeholder="Precio">
+
+    <input type="number"
+           id="cat_stock"
+           placeholder="Stock">
+
+    <textarea id="cat_descripcion"
+              placeholder="Descripción"></textarea>
+
+    <input type="file"
+           id="cat_imagen">
+
+   <button id="btnGuardar"
+        onclick="crearItemCatalogo()">
+
+    Guardar
+
+</button>
+    <button onclick="cargarCatalogo()">
+        Ver Catálogo
+    </button>
+    
+
+</div>
+
+<div id="listaCatalogo" style="display:none;"></div>
+
+<script src="catalogo.js"></script>
+
+</body>
+</html>

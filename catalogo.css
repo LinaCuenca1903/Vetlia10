@@ -1,0 +1,67 @@
+body{
+    font-family:Segoe UI;
+    background:#f5f7fb;
+    padding:30px;
+}
+
+.form-grid{
+    display:grid;
+    gap:15px;
+    margin-bottom:30px;
+}
+
+input,
+select,
+textarea{
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+button{
+    padding:6px 12px;
+    border:none;
+    border-radius:5px;
+    background:#4facfe;
+    color:white;
+    cursor:pointer;
+    width:auto;
+    justify-self:start;
+}
+
+.form-grid button{
+    justify-self:center;
+}
+
+#listaCatalogo{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fill,minmax(250px,1fr));
+
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.card-img{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    border-radius:15px;
+}
+
+.emoji{
+    font-size:80px;
+}
+.card-buttons{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
