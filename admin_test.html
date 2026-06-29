@@ -1,0 +1,1334 @@
+
+raw
+Admin · HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<title>Vetlia - Admin</title>
+ 
+<style>
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --surface2: #faf9f7;
+  --primary: #2d6a4f;
+  --primary-dark: #1b4332;
+  --primary-light: #d8f3dc;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e0d8;
+  --danger: #ef4444;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --sidebar-w: 220px;
+}
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+}
+ 
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--primary-dark);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 200;
+}
+ 
+.sidebar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.sidebar-user {
+  padding: 14px 20px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+ 
+.sidebar-user span {
+  display: block;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+ 
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+ 
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+ 
+.nav-item:hover {
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+ 
+.nav-item.active {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  font-weight: 600;
+}
+ 
+.nav-item.danger {
+  color: #fca5a5;
+  margin-top: auto;
+}
+ 
+.nav-item.danger:hover { background: rgba(239,68,68,0.2); color: #fca5a5; }
+ 
+.sidebar-footer {
+  padding: 12px 10px 20px;
+}
+ 
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+ 
+.topbar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--primary-dark);
+}
+ 
+.topbar-badge {
+  font-size: 0.78rem;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+ 
+.content {
+  padding: 28px;
+  max-width: 1000px;
+  animation: fadeIn 0.25s ease;
+}
+ 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ── DASHBOARD ── */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+ 
+.dash-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: var(--shadow);
+}
+ 
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+ 
+.dash-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+.dash-label { font-weight: 600; font-size: 0.9rem; }
+.dash-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+ 
+/* ── SECTION ── */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  color: var(--primary-dark);
+  margin-bottom: 18px;
+}
+ 
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 28px 0;
+}
+ 
+/* ── PANEL ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+ 
+.panel-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+ 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+ 
+.form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+ 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+ 
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+ 
+input, select {
+  width: 100%;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+ 
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+}
+ 
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+ 
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+ 
+.btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn-outline:hover { background: var(--primary-light); }
+ 
+.btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); color: var(--text); }
+ 
+.btn-danger { background: #fef2f2; color: var(--danger); border: 1.5px solid #fecaca; }
+.btn-danger:hover { background: var(--danger); color: white; }
+ 
+.btn-info { background: #eff6ff; color: #2563eb; border: 1.5px solid #bfdbfe; }
+.btn-info:hover { background: #2563eb; color: white; }
+ 
+.btn-sm { padding: 6px 11px; font-size: 0.78rem; }
+ 
+.btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+ 
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+ 
+.card:hover { box-shadow: var(--shadow-lg); }
+ 
+.card-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+ 
+.card-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+ 
+.card-avatar img { width: 30px; height: 30px; object-fit: contain; }
+ 
+.card-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+.card-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+.card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+ 
+/* ── BADGE ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+ 
+.badge-green { background: #dcfce7; color: #16a34a; }
+.badge-red   { background: #fee2e2; color: #dc2626; }
+.badge-blue  { background: #dbeafe; color: #2563eb; }
+.badge-gray  { background: #f3f4f6; color: #6b7280; }
+ 
+/* ── EMPTY ── */
+.empty {
+  text-align: center; padding: 36px;
+  color: var(--text-muted); font-size: 0.875rem;
+}
+.empty-icon { font-size: 2.2rem; margin-bottom: 8px; }
+ 
+/* ── MODAL ── */
+.modal {
+  display: none;
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.45);
+  justify-content: center; align-items: center;
+  z-index: 500;
+}
+ 
+.modal.open { display: flex; }
+ 
+.modal-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px;
+  width: 380px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.2s ease;
+}
+ 
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--primary-dark);
+  margin-bottom: 18px;
+}
+ 
+.modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+ 
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+ 
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+ 
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .sidebar { width: 60px; }
+  .sidebar-logo span:last-child,
+  .sidebar-user, .nav-item span { display: none; }
+  .main { margin-left: 60px; }
+  .content { padding: 16px; }
+  .form-grid.cols-2, .form-grid.cols-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+ 
+<body>
+ 
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">🐾 <span>Vetlia</span></div>
+  <div class="sidebar-user">
+    Panel Admin
+    <span id="sidebarNombre"></span>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" id="nav-inicio"    onclick="cargar('inicio',this)">🏠 <span>Inicio</span></button>
+    <button class="nav-item"        id="nav-usuarios"  onclick="cargar('usuarios',this)">👤 <span>Usuarios</span></button>
+    <button class="nav-item"        id="nav-pacientes" onclick="cargar('pacientes',this)">🐾 <span>Pacientes</span></button>
+    <button class="nav-item"        id="nav-citas"     onclick="cargar('citas',this)">📅 <span>Citas</span></button>
+    <button class="nav-item"        id="nav-historias" onclick="cargar('historias',this)">📋 <span>Historias</span></button>
+    <button class="nav-item"        onclick="window.location.href='catalogo.html'">📦 <span>Catálogo</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="nav-item danger" onclick="logout()">🚪 <span>Salir</span></button>
+  </div>
+</aside>
+ 
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitulo">Panel de Control</div>
+    <div class="topbar-badge">Admin</div>
+  </div>
+  <div class="content" id="contenido"></div>
+</div>
+ 
+<!-- ══════════ MODALES ══════════ -->
+ 
+<!-- Modal Usuario -->
+<div class="modal" id="modalUsuario">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Usuario</div>
+    <div class="modal-fields">
+      <div class="form-group"><label>Nombre</label><input id="editNombre" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Correo</label><input id="editEmail" placeholder="correo@ejemplo.com"></div>
+      <div class="form-group"><label>Rol</label>
+        <select id="editRol">
+          <option value="admin">Admin</option>
+          <option value="veterinario">Veterinario</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modalUsuario')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarUsuario()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal Tutor -->
+<div class="modal" id="modalTutor">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Tutor</div>
+    <div class="modal-fields">
+      <div class="form-group"><label>Nombre</label><input id="editTNombre"></div>
+      <div class="form-group"><label>Teléfono</label><input id="editTTelefono"></div>
+      <div class="form-group"><label>Dirección</label><input id="editTDireccion"></div>
+      <div class="form-group"><label>Correo</label><input id="editTEmail"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modalTutor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarTutor()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal Paciente -->
+<div class="modal" id="modalPaciente">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Paciente</div>
+    <div class="modal-fields">
+      <div class="form-group"><label>Nombre</label><input id="editPNombre"></div>
+      <div class="form-group"><label>Especie</label><input id="editPEspecie"></div>
+      <div class="form-group"><label>Raza</label><input id="editPRaza"></div>
+      <div class="form-group"><label>Edad</label><input id="editPEdad"></div>
+      <div class="form-group"><label>Tutor</label><select id="editPTutor"></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modalPaciente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarPaciente()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal Cita -->
+<div class="modal" id="modalCita">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Cita</div>
+    <div class="modal-fields">
+      <div class="form-group"><label>Fecha</label><input type="date" id="editCitaFecha"></div>
+      <div class="form-group"><label>Hora</label><input type="time" id="editCitaHora"></div>
+      <div class="form-group"><label>Motivo</label><input id="editCitaMotivo" placeholder="Motivo"></div>
+      <div class="form-group"><label>Estado</label>
+        <select id="editCitaEstado">
+          <option>Pendiente</option>
+          <option>Confirmada</option>
+          <option>Cancelada</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modalCita')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCita()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Modal Historia -->
+<div class="modal" id="modalHistoria">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Editar Historia</div>
+    <div class="modal-fields">
+      <div class="form-group"><label>Diagnóstico</label><input id="editDiagnostico" placeholder="Diagnóstico"></div>
+      <div class="form-group"><label>Tratamiento</label><input id="editTratamiento" placeholder="Tratamiento"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal('modalHistoria')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarHistoria()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+ 
+// ── AUTH ──
+const user = JSON.parse(localStorage.getItem("user"));
+if (!user) location = "login_vet.html";
+if (user.rol !== "admin") { alert("No autorizado"); location = "login_vet.html"; }
+ 
+document.getElementById("sidebarNombre").textContent = user.nombre;
+ 
+// ── NAV ──
+function setNav(btn) {
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+}
+ 
+function setTopbar(txt) {
+  document.getElementById("topbarTitulo").textContent = txt;
+}
+ 
+// ════════════════════════════════
+//  MÓDULOS
+// ════════════════════════════════
+function cargar(modulo, navBtn) {
+  setNav(navBtn);
+  const c = document.getElementById("contenido");
+ 
+  // ── INICIO ──
+  if (modulo === "inicio") {
+    setTopbar("Panel de Control");
+    c.innerHTML = `
+      <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:20px">Resumen general del sistema</p>
+      <div class="dashboard">
+        <div class="dash-card" onclick="cargar('usuarios')">
+          <span class="dash-icon">👤</span>
+          <div class="dash-label">Usuarios</div>
+          <div class="dash-sub">Gestión de accesos</div>
+        </div>
+        <div class="dash-card" onclick="cargar('pacientes')">
+          <span class="dash-icon">🐾</span>
+          <div class="dash-label">Pacientes</div>
+          <div class="dash-sub">Tutores y mascotas</div>
+        </div>
+        <div class="dash-card" onclick="cargar('citas')">
+          <span class="dash-icon">📅</span>
+          <div class="dash-label">Citas</div>
+          <div class="dash-sub">Agenda</div>
+        </div>
+        <div class="dash-card" onclick="cargar('historias')">
+          <span class="dash-icon">📋</span>
+          <div class="dash-label">Historias</div>
+          <div class="dash-sub">Historial clínico</div>
+        </div>
+        <div class="dash-card" onclick="window.location.href='catalogo.html'">
+          <span class="dash-icon">📦</span>
+          <div class="dash-label">Catálogo</div>
+          <div class="dash-sub">Productos</div>
+        </div>
+      </div>`;
+  }
+ 
+  // ── USUARIOS ──
+  if (modulo === "usuarios") {
+    setTopbar("Usuarios");
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-title">➕ Nuevo Usuario</div>
+        <div class="form-grid cols-2">
+          <div class="form-group"><label>Nombre</label><input id="nombre" placeholder="Ej. Juan Pérez"></div>
+          <div class="form-group"><label>Correo</label><input id="email" placeholder="correo@vetlia.com"></div>
+          <div class="form-group"><label>Contraseña</label><input id="password" type="password" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-group"><label>Rol</label>
+            <select id="rol">
+              <option value="admin">Admin</option>
+              <option value="veterinario">Veterinario</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="crearUsuario()">💾 Crear usuario</button>
+          <button class="btn btn-outline" onclick="cargarUsuarios()">👁️ Ver usuarios</button>
+        </div>
+      </div>
+      <div id="listaUsuarios"></div>`;
+  }
+ 
+  // ── PACIENTES ──
+  if (modulo === "pacientes") {
+    setTopbar("Pacientes");
+    c.innerHTML = `
+      <h2 class="section-title">Tutores</h2>
+      <div class="panel">
+        <div class="panel-title">➕ Nuevo Tutor</div>
+        <div class="form-grid cols-2">
+          <div class="form-group"><label>Nombre</label><input id="t_nombre" placeholder="Ej. María Gómez"></div>
+          <div class="form-group"><label>Teléfono</label><input id="t_telefono" placeholder="3001234567"></div>
+          <div class="form-group"><label>Dirección</label><input id="t_direccion" placeholder="Calle 10 #20-30"></div>
+          <div class="form-group"><label>Correo</label><input id="t_email" placeholder="correo@email.com"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="crearTutor()">💾 Crear tutor</button>
+          <button class="btn btn-outline" onclick="cargarTutoresLista()">👁️ Ver tutores</button>
+        </div>
+      </div>
+      <div id="listaTutores"></div>
+ 
+      <hr class="section-divider">
+ 
+      <h2 class="section-title">Pacientes</h2>
+      <div class="panel">
+        <div class="panel-title">➕ Nuevo Paciente</div>
+        <div class="form-grid cols-2">
+          <div class="form-group"><label>Nombre</label><input id="p_nombre" placeholder="Nombre de la mascota"></div>
+          <div class="form-group"><label>Especie</label><input id="p_especie" placeholder="Perro / Gato"></div>
+          <div class="form-group"><label>Raza</label><input id="p_raza" placeholder="Ej. Labrador"></div>
+          <div class="form-group"><label>Edad</label><input id="p_edad" placeholder="Ej. 3"></div>
+        </div>
+        <div class="form-group" style="margin-top:10px">
+          <label>Tutor</label><select id="p_tutor"></select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="crearPaciente()">💾 Crear paciente</button>
+          <button class="btn btn-outline" onclick="cargarPacientes()">👁️ Ver pacientes</button>
+        </div>
+      </div>
+      <div id="listaPacientes"></div>`;
+ 
+    cargarTutoresSelect("p_tutor");
+  }
+ 
+  // ── CITAS ──
+  if (modulo === "citas") {
+    setTopbar("Citas");
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-title">➕ Agendar Cita</div>
+        <div class="form-grid cols-2">
+          <div class="form-group"><label>Paciente</label><select id="c_mascota"></select></div>
+          <div class="form-group"><label>Motivo</label><input id="c_motivo" placeholder="Ej. Consulta general"></div>
+          <div class="form-group"><label>Fecha</label><input type="date" id="c_fecha"></div>
+          <div class="form-group"><label>Hora</label><input type="time" id="c_hora"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="crearCita()">📅 Agendar</button>
+          <button class="btn btn-outline" onclick="cargarCitas()">👁️ Ver citas</button>
+        </div>
+      </div>
+      <div id="listaCitas"></div>`;
+ 
+    cargarMascotasSelect("c_mascota");
+  }
+ 
+  // ── HISTORIAS ──
+  if (modulo === "historias") {
+    setTopbar("Historias Clínicas");
+    c.innerHTML = `
+      <div class="panel">
+        <div class="panel-title">📂 Seleccionar paciente</div>
+        <div class="form-group" style="max-width:320px">
+          <label>Paciente</label>
+          <select id="hist_mascota"></select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="cargarHistorias()">🔍 Ver historias</button>
+        </div>
+      </div>
+      <div id="listaHistorias"></div>`;
+ 
+    cargarMascotasSelect("hist_mascota");
+  }
+}
+ 
+// ════════════════════════════════
+//  USUARIOS
+// ════════════════════════════════
+let userEditando = null;
+ 
+async function crearUsuario() {
+  const nombre   = document.getElementById("nombre");
+  const email    = document.getElementById("email");
+  const password = document.getElementById("password");
+  const rol      = document.getElementById("rol");
+ 
+  if (!nombre.value || !email.value || !password.value) { alert("Completa todos los campos"); return; }
+ 
+  let r = await fetch("http://localhost/vetlia/crear_usuario.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ nombre:nombre.value, email:email.value, password:password.value, rol:rol.value })
+  });
+  let d = await r.json();
+ 
+  if (d.success) {
+    alert("Usuario creado ✅");
+    nombre.value = email.value = password.value = "";
+    cargarUsuarios();
+  } else { alert("Error: " + (d.error || "No se pudo crear")); }
+}
+ 
+async function cargarUsuarios() {
+  const lista = document.getElementById("listaUsuarios");
+  if (!lista) return;
+ 
+  let r = await fetch("http://localhost/vetlia/get_usuarios.php");
+  let d = await r.json();
+ 
+  if (!d.length) {
+    lista.innerHTML = `<div class="empty"><div class="empty-icon">👤</div>No hay usuarios</div>`;
+    return;
+  }
+ 
+  lista.innerHTML = d.map(u => `
+    <div class="card">
+      <div class="card-info">
+        <div class="card-avatar" style="background:#dbeafe">
+          <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png">
+        </div>
+        <div>
+          <div class="card-name">${u.nombre}</div>
+          <div class="card-meta">📧 ${u.email}</div>
+          <div class="card-meta" style="margin-top:4px">
+            <span class="badge ${u.rol === 'admin' ? 'badge-blue' : 'badge-green'}">${u.rol}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-info btn-sm" onclick="abrirUsuario(${u.id},'${u.nombre}','${u.email}','${u.rol}')">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${u.id})">🗑️</button>
+      </div>
+    </div>`).join("");
+}
+ 
+function abrirUsuario(id, n, e, r) {
+  userEditando = id;
+  document.getElementById("editNombre").value = n;
+  document.getElementById("editEmail").value  = e;
+  document.getElementById("editRol").value    = r;
+  abrirModal("modalUsuario");
+}
+ 
+async function guardarUsuario() {
+  if (!document.getElementById("editNombre").value || !document.getElementById("editEmail").value) { alert("Campos vacíos"); return; }
+ 
+  let r = await fetch("http://localhost/vetlia/editar_usuario.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ id:userEditando, nombre:document.getElementById("editNombre").value, email:document.getElementById("editEmail").value, rol:document.getElementById("editRol").value })
+  });
+  let d = await r.json();
+ 
+  if (d.success) { cerrarModal("modalUsuario"); cargarUsuarios(); }
+  else { alert("Error al guardar"); }
+}
+ 
+async function eliminarUsuario(id) {
+  if (!confirm("¿Eliminar usuario?")) return;
+  await fetch("http://localhost/vetlia/eliminar_usuario.php", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ id }) });
+  cargarUsuarios();
+}
+ 
+// ════════════════════════════════
+//  TUTORES
+// ════════════════════════════════
+let tutorEditando = null;
+ 
+async function crearTutor() {
+  let r = await fetch("http://localhost/vetlia/crear_tutor.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      nombre:    document.getElementById("t_nombre").value,
+      telefono:  document.getElementById("t_telefono").value,
+      direccion: document.getElementById("t_direccion").value,
+      email:     document.getElementById("t_email").value
+    })
+  });
+  let d = await r.json();
+  if (d.success) {
+    alert("Tutor creado ✅");
+    cargarTutoresLista();
+    cargarTutoresSelect("p_tutor");
+  } else { alert("Error: " + (d.error || "No se pudo crear")); }
+}
+ 
+async function cargarTutoresSelect(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let r = await fetch("http://localhost/vetlia/get_tutores.php");
+  let d = await r.json();
+  el.innerHTML = d.map(t => `<option value="${t.id}">${t.nombre}</option>`).join("");
+}
+ 
+async function cargarTutoresLista() {
+  const lista = document.getElementById("listaTutores");
+  if (!lista) return;
+ 
+  let r = await fetch("http://localhost/vetlia/get_tutores.php");
+  let d = await r.json();
+ 
+  if (!d.length) {
+    lista.innerHTML = `<div class="empty"><div class="empty-icon">👤</div>No hay tutores</div>`;
+    return;
+  }
+ 
+  lista.innerHTML = d.map(t => `
+    <div class="card">
+      <div class="card-info">
+        <div class="card-avatar">
+          <img src="https://cdn-icons-png.flaticon.com/512/194/194938.png">
+        </div>
+        <div>
+          <div class="card-name">${t.nombre}</div>
+          <div class="card-meta">📞 ${t.telefono} · 📧 ${t.email}</div>
+          <div class="card-meta">📍 ${t.direccion || "—"}</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-info btn-sm" onclick="abrirTutor(${t.id},'${t.nombre}','${t.telefono}','${t.direccion}','${t.email}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarTutor(${t.id})">🗑️</button>
+      </div>
+    </div>`).join("");
+}
+ 
+function abrirTutor(id, n, tel, dir, email) {
+  tutorEditando = id;
+  document.getElementById("editTNombre").value    = n;
+  document.getElementById("editTTelefono").value  = tel;
+  document.getElementById("editTDireccion").value = dir;
+  document.getElementById("editTEmail").value     = email;
+  abrirModal("modalTutor");
+}
+ 
+async function guardarTutor() {
+  if (!document.getElementById("editTNombre").value) { alert("Nombre requerido"); return; }
+ 
+  let res = await fetch("http://localhost/vetlia/editar_tutor.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      id:        tutorEditando,
+      nombre:    document.getElementById("editTNombre").value,
+      telefono:  document.getElementById("editTTelefono").value,
+      direccion: document.getElementById("editTDireccion").value,
+      email:     document.getElementById("editTEmail").value
+    })
+  });
+  let txt = await res.text();
+  try {
+    let data = JSON.parse(txt);
+    if (data.success) { cerrarModal("modalTutor"); cargarTutoresLista(); }
+    else { alert("Error al actualizar"); }
+  } catch(e) { alert("Error del servidor"); }
+}
+ 
+async function eliminarTutor(id) {
+  if (!confirm("¿Eliminar tutor?")) return;
+  let res = await fetch("http://localhost/vetlia/eliminar_tutor.php", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ id }) });
+  let txt = await res.text();
+  try {
+    let data = JSON.parse(txt);
+    if (data.success) { alert("Eliminado ✅"); cargarTutoresLista(); }
+    else { alert("Error"); }
+  } catch(e) { alert("Error del servidor"); }
+}
+ 
+// ════════════════════════════════
+//  PACIENTES
+// ════════════════════════════════
+let pacienteEditando = null;
+ 
+async function crearPaciente() {
+  let r = await fetch("http://localhost/vetlia/crear_paciente.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      nombre:   document.getElementById("p_nombre").value,
+      especie:  document.getElementById("p_especie").value,
+      raza:     document.getElementById("p_raza").value,
+      edad:     document.getElementById("p_edad").value,
+      tutor_id: document.getElementById("p_tutor").value
+    })
+  });
+  let d = await r.json();
+  if (d.success) { alert("Paciente creado ✅"); cargarPacientes(); }
+  else { alert("Error: " + (d.error || "No se pudo crear")); }
+}
+ 
+async function cargarPacientes() {
+  const lista = document.getElementById("listaPacientes");
+  if (!lista) return;
+ 
+  let r = await fetch("http://localhost/vetlia/get_pacientes.php");
+  let d = await r.json();
+ 
+  if (!d.length) {
+    lista.innerHTML = `<div class="empty"><div class="empty-icon">🐾</div>No hay pacientes</div>`;
+    return;
+  }
+ 
+  lista.innerHTML = d.map(p => {
+    let img = p.especie && p.especie.toLowerCase().includes("gato")
+      ? "https://cdn-icons-png.flaticon.com/512/616/616430.png"
+      : "https://cdn-icons-png.flaticon.com/512/616/616408.png";
+ 
+    return `
+      <div class="card">
+        <div class="card-info">
+          <div class="card-avatar"><img src="${img}"></div>
+          <div>
+            <div class="card-name">${p.nombre}</div>
+            <div class="card-meta">${p.especie} · ${p.raza} · ${p.edad} años</div>
+            <div class="card-meta">👤 ${p.tutor_nombre}</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-info btn-sm" onclick="abrirPaciente(${p.id},'${p.nombre}','${p.especie}','${p.raza}','${p.edad}',${p.tutor_id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarPaciente(${p.id})">🗑️</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+ 
+function abrirPaciente(id, n, e, r, edad, tutor) {
+  pacienteEditando = id;
+  document.getElementById("editPNombre").value  = n;
+  document.getElementById("editPEspecie").value = e;
+  document.getElementById("editPRaza").value    = r;
+  document.getElementById("editPEdad").value    = edad;
+  cargarTutoresSelect("editPTutor");
+  setTimeout(() => document.getElementById("editPTutor").value = tutor, 200);
+  abrirModal("modalPaciente");
+}
+ 
+async function guardarPaciente() {
+  if (!document.getElementById("editPNombre").value) { alert("Nombre requerido"); return; }
+ 
+  let res = await fetch("http://localhost/vetlia/editar_paciente.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      id:       pacienteEditando,
+      nombre:   document.getElementById("editPNombre").value,
+      especie:  document.getElementById("editPEspecie").value,
+      raza:     document.getElementById("editPRaza").value,
+      edad:     document.getElementById("editPEdad").value,
+      tutor_id: document.getElementById("editPTutor").value
+    })
+  });
+  let txt = await res.text();
+  try {
+    let data = JSON.parse(txt);
+    if (data.success) { cerrarModal("modalPaciente"); cargarPacientes(); }
+    else { alert("Error"); }
+  } catch(e) { alert("Error del servidor"); }
+}
+ 
+async function eliminarPaciente(id) {
+  if (!confirm("¿Eliminar paciente?")) return;
+  let res = await fetch("http://localhost/vetlia/eliminar_paciente.php", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ id }) });
+  let txt = await res.text();
+  try {
+    let data = JSON.parse(txt);
+    if (data.success) { alert("Eliminado ✅"); cargarPacientes(); }
+    else { alert("Error"); }
+  } catch(e) { alert("Error del servidor"); }
+}
+ 
+// ════════════════════════════════
+//  CITAS
+// ════════════════════════════════
+let citaEditando = null;
+ 
+async function crearCita() {
+  const fecha  = document.getElementById("c_fecha");
+  const hora   = document.getElementById("c_hora");
+  const motivo = document.getElementById("c_motivo");
+ 
+  if (!fecha.value || !hora.value || !motivo.value) { alert("Completa todos los campos"); return; }
+ 
+  let r = await fetch("http://localhost/vetlia/crear_cita.php", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      mascota_id: document.getElementById("c_mascota").value,
+      usuario_id: user.id,
+      fecha:      fecha.value,
+      hora:       hora.value,
+      motivo:     motivo.value
+    })
+  });
+  let d = await r.json();
+  if (d.success) { alert("Cita agendada ✅"); cargarCitas(); }
+  else { alert(d.error || "Error"); }
+}
+ 
+async function cargarCitas(){
+
+  const lista=document.getElementById("listaCitas");
+  if(!lista) return;
+
+  let r=await fetch("http://localhost/vetlia/get_citas.php");
+  let d=await r.json();
+
+  if(!d.length){
+    lista.innerHTML=`
+    <div class="empty">
+      <div class="empty-icon">📅</div>
+      No hay citas registradas
+    </div>`;
+    return;
+  }
+
+  const estadoBadge=e=>{
+
+    if(e=="confirmada")
+      return `<span class="badge badge-green">✅ Confirmada</span>`;
+
+    if(e=="cancelada")
+      return `<span class="badge badge-red">❌ Cancelada</span>`;
+
+    return `<span class="badge badge-blue">🕐 pendiente</span>`;
+  };
+
+  lista.innerHTML=d.map(c=>`
+
+<div class="card">
+
+<div class="card-info">
+
+<div class="card-avatar">
+<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png">
+</div>
+
+<div>
+
+<div class="card-name">
+${c.paciente}
+</div>
+
+<div class="card-meta">
+📅 ${c.fecha}
+&nbsp;&nbsp;⏰ ${c.hora}
+</div>
+
+<div class="card-meta">
+${c.motivo}
+</div>
+
+<div style="margin-top:6px">
+${estadoBadge(c.estado)}
+</div>
+
+</div>
+
+</div>
+
+<div class="card-actions">
+
+<button
+class="btn btn-info btn-sm"
+onclick="abrirCita(
+${c.id},
+'${c.fecha}',
+'${c.hora}',
+'${c.motivo}',
+'${c.estado}'
+)">
+✏️
+</button>
+
+<button
+class="btn btn-danger btn-sm"
+onclick="eliminarCita(${c.id})">
+🗑️
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+ 
+function abrirCita(id,fecha,hora,motivo,estado){
+
+    citaEditando=id;
+
+    document.getElementById("editCitaFecha").value=fecha;
+    document.getElementById("editCitaHora").value=hora;
+    document.getElementById("editCitaMotivo").value=motivo;
+    document.getElementById("editCitaEstado").value=estado;
+
+    abrirModal("modalCita");
+
+}
+ 
+async function guardarCita(){
+
+let r=await fetch("http://localhost/vetlia/editar_cita.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+id:citaEditando,
+fecha:document.getElementById("editCitaFecha").value,
+hora:document.getElementById("editCitaHora").value,
+motivo:document.getElementById("editCitaMotivo").value,
+estado:document.getElementById("editCitaEstado").value
+
+})
+
+});
+
+let d=await r.json();
+
+if(d.success){
+
+cerrarModal("modalCita");
+
+cargarCitas();
+
+}else{
+
+alert(d.error || "No fue posible actualizar la cita");
+
+}
+
+}
+ 
+async function cancelarCita(id) {
+  if (!confirm("¿Cancelar esta cita?")) return;
+  await fetch("http://localhost/vetlia/cancelar_cita.php", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ id }) });
+  cargarCitas();
+}
+
+async function eliminarCita(id){
+
+if(!confirm("¿Eliminar esta cita?")) return;
+
+let r=await fetch("http://localhost/vetlia/eliminar_cita.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({id})
+
+});
+
+let d=await r.json();
+
+if(d.success){
+
+alert("Cita eliminada correctamente");
+
+cargarCitas();
+
+}else{
+
+alert(d.error || "No fue posible eliminar");
+
+}
+
+}
+ 
+// ════════════════════════════════
+//  HISTORIAS
+// ════════════════════════════════
+let historiaEditando = null;
+ 
+async function cargarHistorias() {
+  const lista = document.getElementById("listaHistorias");
+  const sel   = document.getElementById("hist_mascota");
+  if (!lista || !sel || !sel.value) { if (lista) lista.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>Selecciona una mascota</div>`; return; }
+ 
+  lista.innerHTML = `<div class="empty">Cargando...</div>`;
+ 
+  try {
+    let r = await fetch("http://localhost/vetlia/get_historial.php?id=" + sel.value);
+    let d = await r.json();
+ 
+    if (!Array.isArray(d) || !d.length) {
+      lista.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>No hay historias para esta mascota</div>`;
+      return;
+    }
+ 
+    lista.innerHTML = d.map(h => `
+      <div class="card" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-weight:600;color:var(--primary-dark)">📅 ${h.fecha}</span>
+          <div class="card-actions">
+            <button class="btn btn-info btn-sm"   onclick="editarHistoria(${h.id})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarHistoria(${h.id})">🗑️</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;font-size:0.83rem">
+          <div><span style="color:var(--text-muted)">Diagnóstico:</span> ${h.diagnostico}</div>
+          <div><span style="color:var(--text-muted)">Tratamiento:</span> ${h.tratamiento}</div>
+          <div><span style="color:var(--text-muted)">Veterinario:</span> ${h.veterinario || "—"}</div>
+        </div>
+      </div>`).join("");
+ 
+  } catch(e) {
+    console.error(e);
+    lista.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error al cargar historias</div>`;
+  }
+}
+ 
+async function editarHistoria(id) {
+  historiaEditando = id;
+  try {
+    let r = await fetch("http://localhost/vetlia/get_historia_by_id.php?id=" + id);
+    let h = await r.json();
+    if (!h) { alert("Historia no encontrada"); return; }
+    document.getElementById("editDiagnostico").value = h.diagnostico || "";
+    document.getElementById("editTratamiento").value = h.tratamiento || "";
+    abrirModal("modalHistoria");
+  } catch(e) { console.error(e); alert("Error al cargar historia"); }
+}
+ 
+async function guardarHistoria() {
+  if (!historiaEditando) { alert("No hay historia seleccionada"); return; }
+  if (!document.getElementById("editDiagnostico").value || !document.getElementById("editTratamiento").value) { alert("Completa los campos"); return; }
+ 
+  try {
+    let r = await fetch("http://localhost/vetlia/editar_historia.php", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ id:historiaEditando, diagnostico:document.getElementById("editDiagnostico").value, tratamiento:document.getElementById("editTratamiento").value })
+    });
+    let d = await r.json();
+    if (d.success) { cerrarModal("modalHistoria"); cargarHistorias(); }
+    else { alert(d.error || "Error al actualizar"); }
+  } catch(e) { alert("Error de conexión"); }
+}
+ 
+async function eliminarHistoria(id) {
+  if (!confirm("¿Eliminar historia clínica?")) return;
+  let r = await fetch("http://localhost/vetlia/eliminar_historia.php", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ id }) });
+  let d = await r.json();
+  if (d.success) { alert("Historia eliminada ✅"); cargarHistorias(); }
+  else { alert(d.error || "Error al eliminar"); }
+}
+ 
+// ════════════════════════════════
+//  GENERALES
+// ════════════════════════════════
+async function cargarMascotasSelect(idSelect) {
+  const el = document.getElementById(idSelect);
+  if (!el) return;
+  let r = await fetch("http://localhost/vetlia/get_pacientes.php");
+  let d = await r.json();
+  el.innerHTML = d.map(m => `<option value="${m.id}">${m.nombre}</option>`).join("");
+}
+ 
+function abrirModal(id) {
+  document.getElementById(id).classList.add("open");
+}
+ 
+function cerrarModal(id) {
+  document.getElementById(id).classList.remove("open");
+}
+ 
+// Cerrar modal al hacer click fuera
+document.querySelectorAll(".modal").forEach(m => {
+  m.addEventListener("click", e => { if (e.target === m) cerrarModal(m.id); });
+});
+ 
+function logout() {
+  localStorage.removeItem("user");
+  location = "login_vet.html";
+}
+ 
+// Arrancar
+cargar("inicio", document.getElementById("nav-inicio"));
+</script>
+ 
+</body>
+</html>

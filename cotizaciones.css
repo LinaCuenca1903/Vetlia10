@@ -62,3 +62,14 @@ td{
     border-bottom:1px solid #ddd;
     text-align:center;
 }
+
+#btnEditarCotizacion{
+    display:none;
+    background:#ffb020;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}

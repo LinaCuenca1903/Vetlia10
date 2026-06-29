@@ -5,6 +5,7 @@ $mascota_id = isset($_GET['mascota_id']) ? $_GET['mascota_id'] : null;
 
 $sql = "SELECT 
 c.id,
+c.mascota_id,
 m.nombre AS paciente,
 m.especie,
 c.fecha,

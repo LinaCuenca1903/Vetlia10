@@ -201,7 +201,24 @@ contenido.innerHTML=`
 <input type="time" id="c_hora">
 <input id="c_motivo" placeholder="Motivo">
 
-<button onclick="crearCita()">Agendar</button>
+-<div style="display:flex;gap:10px;">
+
+<button
+id="btnGuardarCita"
+onclick="guardarCita()">
+
+📅 Agendar
+</button>
+
+<button
+id="btnCancelarEdicion"
+onclick="cancelarEdicionCita()"
+style="display:none;background:#dc3545;">
+
+❌ Cancelar
+</button>
+
+</div>
 
 <hr>
 
@@ -329,55 +346,111 @@ mostrandoPacientes=true;
 
 // ================= CITAS =================
 
-// 🔒 BLOQUEO DE HORAS
-async function crearCita(){
+async function guardarCita(){
 
 if(!c_fecha.value || !c_hora.value){
+
 alert("Completa fecha y hora");
 return;
+
 }
 
-let res = await fetch("http://localhost/vetlia/crear_cita.php",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
+let url =
+citaEditando
+? "http://localhost/vetlia/editar_cita.php"
+: "http://localhost/vetlia/crear_cita.php";
+
+let body = {
+
 mascota_id:c_mascota.value,
 usuario_id:user.id,
 fecha:c_fecha.value,
 hora:c_hora.value,
 motivo:c_motivo.value
-})
-});
 
-//let r = await res.json();
+};
 
-let txt = await res.text();
-console.log("RESPUESTA REAL:", txt);
+if(citaEditando){
 
-let r;
-try{
-r = JSON.parse(txt);
-}catch(e){
-alert("❌ El servidor NO está devolviendo JSON válido");
-return;
+body.id = citaEditando;
+
 }
 
-if(r.success){
-alert("Cita creada ✅");
+let res = await fetch(url,{
 
-// limpiar campos
-c_fecha.value="";
-c_hora.value="";
-c_motivo.value="";
-filtro_mascota.value="all";
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(body)
+
+});
+
+let r = await res.json();
+
+if(r.success){
+
+alert(
+citaEditando
+? "Cita actualizada ✅"
+: "Cita creada ✅"
+);
+
+cancelarEdicionCita();
 
 cargarCitas();
 
+calendar.destroy();
+initCalendar();
+
 }else{
-alert("Error: " + (r.error || "No se pudo crear la cita"));
+
+alert(r.error || "Error");
+
 }
 
-} // 🔥 ESTE CIERRE FALTABA
+}
+
+function editarCita(cita){
+
+citaEditando = cita.id;
+
+c_mascota.value = cita.mascota_id;
+c_fecha.value = cita.fecha;
+c_hora.value = cita.hora;
+c_motivo.value = cita.motivo;
+
+btnGuardarCita.innerHTML =
+"💾 Guardar cambios";
+
+btnCancelarEdicion.style.display =
+"inline-block";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+function cancelarEdicionCita(){
+
+citaEditando = null;
+
+c_mascota.value = "";
+c_fecha.value = "";
+c_hora.value = "";
+c_motivo.value = "";
+
+btnGuardarCita.innerHTML =
+"📅 Agendar";
+
+btnCancelarEdicion.style.display =
+"none";
+
+}
 
 // 🔎 FILTRO LIMPIO
 function filtrarCitas(){

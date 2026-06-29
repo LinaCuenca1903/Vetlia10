@@ -1,74 +1,68 @@
 <?php
-// crear_cotizacion.php
 
 header("Content-Type: application/json");
 
-$conn = new mysqli(
-    "localhost",
-    "root",
-    "",
-    "veterinaria"
-);
+$conn = new mysqli("localhost","root","","veterinaria");
 
-$data = json_decode(
-    file_get_contents("php://input"),
-    true
-);
+$data = json_decode(file_get_contents("php://input"), true);
 
 $mascota_id = $data["mascota_id"];
 $usuario_id = $data["usuario_id"];
-$total = $data["total"];
-$items = $data["items"];
-$estado = $data["estado"];
+$total      = $data["total"];
+$estado     = $data["estado"];
+$items      = $data["items"];
 
 $sql = "INSERT INTO cotizaciones
 (mascota_id,usuario_id,fecha,total,estado)
 VALUES
-(?,?,NOW(),?,?)
+(?,?,NOW(),?,?)";
 
 $stmt = $conn->prepare($sql);
+
+if(!$stmt){
+    die(json_encode([
+        "success"=>false,
+        "error"=>$conn->error
+    ]));
+}
 
 $stmt->bind_param(
     "iids",
     $mascota_id,
     $usuario_id,
-    $total
+    $total,
+    $estado
 );
 
-$stmt->execute();
+if(!$stmt->execute()){
+    die(json_encode([
+        "success"=>false,
+        "error"=>$stmt->error
+    ]));
+}
 
 $cotizacion_id = $conn->insert_id;
 
 foreach($items as $item){
 
-    $catalogo_id = $item["catalogo_id"];
-    $cantidad = $item["cantidad"];
-    $precio = $item["precio"];
-    $subtotal = $item["subtotal"];
-
-    $sqlDetalle = "
-    INSERT INTO detalle_cotizacion
+    $sqlDetalle = "INSERT INTO detalle_cotizacion
     (cotizacion_id,catalogo_id,cantidad,precio,subtotal)
-    VALUES
-    (?,?,?,?,?)
-    ";
+    VALUES (?,?,?,?,?)";
 
-    $stmtDetalle =
-    $conn->prepare($sqlDetalle);
+    $stmtDetalle = $conn->prepare($sqlDetalle);
 
     $stmtDetalle->bind_param(
         "iiidd",
         $cotizacion_id,
-        $catalogo_id,
-        $cantidad,
-        $precio,
-        $subtotal
+        $item["catalogo_id"],
+        $item["cantidad"],
+        $item["precio"],
+        $item["subtotal"]
     );
 
     $stmtDetalle->execute();
 }
 
 echo json_encode([
-    "success" => true
+    "success"=>true
 ]);
-?>

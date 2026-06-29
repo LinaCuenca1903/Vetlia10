@@ -1,71 +1,542 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
   <meta charset="UTF-8">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <title>Catálogo Vetlia</title>
 
-  <link rel="stylesheet" href="catalogo.css">
+  <style>
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #faf9f7;
+    --primary: #2d6a4f;
+    --primary-dark: #1b4332;
+    --primary-light: #d8f3dc;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e0d8;
+    --danger: #ef4444;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--primary-dark);
+    color: white;
+    padding: 0 28px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(27,67,50,0.3);
+  }
+
+  .header-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-back {
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .header-back:hover { background: rgba(255,255,255,0.22); }
+
+  /* ── LAYOUT ── */
+  .page {
+    padding: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--primary-dark);
+  }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── FORM ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* file input */
+  input[type="file"] {
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+  .btn-outline:hover { background: var(--primary-light); }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--border); color: var(--text); }
+
+  .btn-danger { background: #fef2f2; color: var(--danger); border: 1.5px solid #fecaca; }
+  .btn-danger:hover { background: var(--danger); color: white; }
+
+  .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  /* ── CATÁLOGO GRID ── */
+  .catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 4px;
+  }
+
+  .item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+  }
+  
+  .item-img{
+    width:100%;
+    height:220px;
+    background:#f8f8f8;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-bottom:1px solid var(--border);
+  }
+
+.item-img img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+
+  .item-body {
+    padding: 14px 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .item-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .item-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+
+  .item-stock {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+
+  /* ── BADGE TIPO ── */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .badge-producto  { background: #dbeafe; color: #2563eb; }
+  .badge-medicina  { background: #fce7f3; color: #db2777; }
+  .badge-servicio  { background: #dcfce7; color: #16a34a; }
+
+  .item-actions {
+    display: flex;
+    gap: 6px;
+    padding: 0 16px 14px;
+  }
+
+  /* ── EMPTY ── */
+  .empty {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    grid-column: 1 / -1;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+  /* ── ANIMACIÓN ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .catalogo-grid { animation: fadeIn 0.3s ease; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .page { padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .catalogo-grid { grid-template-columns: 1fr 1fr; }
+  }
+  </style>
 </head>
 
 <body>
 
-<h1>📦 Catálogo Veterinario</h1>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">🐾 <span>Vetlia</span></div>
+  <button class="header-back" onclick="history.back()">← Volver</button>
+</div>
 
-<div class="form-grid">
+<!-- PAGE -->
+<div class="page">
 
-    <input type="text"
-           id="cat_nombre"
-           placeholder="Nombre">
+  <div class="page-header">
+    <h1 class="page-title">📦 Catálogo</h1>
+  </div>
 
-    <select id="cat_tipo">
+  <!-- FORMULARIO -->
+  <div class="panel">
+    <div class="panel-title">➕ Agregar ítem al catálogo</div>
 
-        <option value="producto">
-            Producto
-        </option>
+    <div class="form-grid">
 
-        <option value="medicina">
-            Medicina
-        </option>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="cat_nombre" placeholder="Ej. Vacuna antirrábica">
+      </div>
 
-        <option value="servicio">
-            Servicio
-        </option>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="cat_tipo">
+          <option value="producto">Producto</option>
+          <option value="medicina">Medicina</option>
+          <option value="servicio">Servicio</option>
+        </select>
+      </div>
 
-    </select>
+      <div class="form-group">
+        <label>Precio</label>
+        <input type="number" id="cat_precio" placeholder="0.00">
+      </div>
 
-    <input type="number"
-           id="cat_precio"
-           placeholder="Precio">
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" id="cat_stock" placeholder="0">
+      </div>
 
-    <input type="number"
-           id="cat_stock"
-           placeholder="Stock">
+      <div class="form-group full">
+        <label>Descripción</label>
+        <textarea id="cat_descripcion" placeholder="Describe brevemente el producto o servicio..."></textarea>
+      </div>
 
-    <textarea id="cat_descripcion"
-              placeholder="Descripción"></textarea>
+      <div class="form-group full">
+        <label>Imagen</label>
+        <input type="file" id="cat_imagen" accept="image/*">
+      </div>
 
-    <input type="file"
-           id="cat_imagen">
+    </div>
 
-   <button id="btnGuardar"
-        onclick="crearItemCatalogo()">
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnGuardar" onclick="crearItemCatalogo()">💾 Guardar ítem</button>
+      <button class="btn btn-outline" onclick="toggleCatalogo()">👁️ Ver catálogo</button>
+    </div>
+  </div>
 
-    Guardar
-
-</button>
-    <button onclick="cargarCatalogo()">
-        Ver Catálogo
-    </button>
-    
+  <!-- LISTA -->
+  <div id="listaCatalogo" style="display:none;">
+    <hr class="section-divider">
+    <div class="panel-title" style="margin-bottom:16px">🗂️ Ítems del catálogo</div>
+    <div class="catalogo-grid" id="gridCatalogo"></div>
+  </div>
 
 </div>
 
-<div id="listaCatalogo" style="display:none;"></div>
-
 <script src="catalogo.js"></script>
+<script>
+// ── Función helper para mostrar/ocultar y cargar ──
+let catalogoVisible = false;
 
+function toggleCatalogo() {
+  const lista = document.getElementById("listaCatalogo");
+  if (catalogoVisible) {
+    lista.style.display = "none";
+    catalogoVisible = false;
+  } else {
+    lista.style.display = "block";
+    cargarCatalogo();
+    catalogoVisible = true;
+  }
+}
+
+// ── Helper para renderizar items con el nuevo diseño ──
+// Tu catalogo.js puede llamar a renderCatalogo(items) para usar este diseño
+
+function renderCatalogo(items){
+
+    const grid = document.getElementById("gridCatalogo");
+
+    if(!grid) return;
+
+    if(items.length==0){
+
+        grid.innerHTML=`
+        <div class="empty">
+            <div class="empty-icon">📦</div>
+            No hay productos registrados
+        </div>`;
+
+        return;
+    }
+
+    grid.innerHTML="";
+
+    items.forEach(item=>{
+
+        let icono="📦";
+
+        if(item.tipo=="medicina") icono="💊";
+        if(item.tipo=="servicio") icono="🩺";
+
+        grid.innerHTML+=`
+
+        <div class="item-card">
+
+            <div class="item-img">
+
+                ${
+                    item.imagen
+                    ?
+                    `<img src="uploads/${item.imagen}" alt="${item.nombre}">`
+                    :
+                    `<div style="font-size:70px">${icono}</div>`
+                }
+
+            </div>
+
+            <div class="item-body">
+
+                <span class="badge badge-${item.tipo}">
+                    ${icono} ${item.tipo}
+                </span>
+
+                <div class="item-name">
+                    ${item.nombre}
+                </div>
+
+                <div class="item-desc">
+                    ${item.descripcion ?? ""}
+                </div>
+
+                <div class="item-meta">
+
+                    <div class="item-price">
+                        $${Number(item.precio).toLocaleString("es-CO")}
+                    </div>
+
+                    <div class="item-stock">
+                        Stock: ${item.stock}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="item-actions">
+
+                <button
+                    class="btn btn-ghost btn-sm"
+                    style="flex:1"
+                    onclick="editarCatalogo(${item.id})">
+
+                    ✏️ Editar
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="eliminarCatalogo(${item.id})">
+
+                    🗑️
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+</script>
 </body>
 </html>

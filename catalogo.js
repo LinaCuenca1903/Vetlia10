@@ -64,60 +64,16 @@ function limpiarFormulario(){
 
 async function cargarCatalogo(){
 
-    listaCatalogo.style.display = "grid";
+    document.getElementById("listaCatalogo").style.display = "block";
 
     let r = await fetch(
-      "http://localhost/vetlia/get_catalogo.php"
+        "http://localhost/vetlia/get_catalogo.php"
     );
 
     let data = await r.json();
 
-    listaCatalogo.innerHTML = "";
+    renderCatalogo(data);
 
-    data.forEach(item => {
-
-        let icono = "📦";
-
-        if(item.tipo == "medicina"){
-            icono = "💊";
-        }
-
-        if(item.tipo == "servicio"){
-            icono = "🩺";
-        }
-
-        listaCatalogo.innerHTML += `
-
-            <div class="card">
-
-                ${
-                    item.imagen
-                    ?
-                    `<img src="uploads/${item.imagen}"
-                    class="card-img">`
-                    :
-                    `<div class="emoji">${icono}</div>`
-                }
-
-                <h3>${item.nombre}</h3>
-
-                <p>${item.tipo}</p>
-
-                <p>$ ${item.precio}</p>
-
-                <p>Stock: ${item.stock}</p>
-
-                <button onclick="editarCatalogo(${item.id})">
-                    Editar
-                </button>
-
-                <button onclick="eliminarCatalogo(${item.id})">
-                    Eliminar
-                </button>
-
-            </div>
-        `;
-    });
 }
 
 async function eliminarCatalogo(id){

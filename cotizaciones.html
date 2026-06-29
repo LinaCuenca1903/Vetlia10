@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 
 <meta charset="UTF-8">
-
 <title>Cotizaciones - Vetlia</title>
 
 <link rel="stylesheet" href="cotizaciones.css">
@@ -13,69 +11,205 @@
 
 <body>
 
-<h1>🧾 Cotizaciones Veterinarias</h1>
+<div class="page-container">
 
-<div class="top-section">
+    <!-- HEADER -->
+    <div class="header-box">
 
-    <select id="cot_mascota"
-            onchange="cargarCotizaciones()">
+        <div>
 
-        <option value="">
-            Seleccionar mascota
-        </option>
+            <h1>🧾 Cotizaciones Veterinarias</h1>
 
-    </select>
+            <p class="subtitle">
+                Gestión de cotizaciones, catálogo y pacientes
+            </p>
 
-    <button onclick="guardarCotizacion()">
-        Guardar Cotización
-    </button>
+        </div>
 
-    <select id="cot_estado">
+    </div>
 
-    <option value="pendiente">
-        Pendiente
-    </option>
+    <!-- FILTROS -->
+    <div class="filters-section">
 
-    <option value="aprobada">
-        Aprobada
-    </option>
+        <!-- TUTOR -->
+        <div class="filter-card">
 
-    <option value="rechazada">
-        Rechazada
-    </option>
+            <label>👤 Filtrar por Tutor</label>
 
-</select>
+            <select id="cot_tutor"
+                    onchange="cargarMascotasPorTutor()">
+
+                <option value="">
+                    Seleccionar tutor
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- MASCOTA -->
+        <div class="filter-card">
+
+            <label>🐶 Seleccionar Mascota</label>
+
+            <select id="cot_mascota"
+                    onchange="cargarCotizaciones()">
+
+                <option value="">
+                    Seleccionar mascota
+                </option>
+
+            </select>
+
+        </div>
+
+        <!-- ESTADO -->
+        <div class="filter-card">
+
+            <label>📌 Estado</label>
+
+            <select id="cot_estado">
+
+                <option value="pendiente">
+                    Pendiente
+                </option>
+
+                <option value="aprobada">
+                    Aprobada
+                </option>
+
+                <option value="rechazada">
+                    Rechazada
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <!-- BOTON GUARDAR -->
+    <div class="actions-section">
+
+        <button onclick="guardarCotizacion()"
+                class="btn-primary">
+
+            💾 Guardar Cotización
+
+        </button>
+
+    </div>
+
+    <!-- CATALOGO -->
+    <div class="catalogo-section">
+
+        <div class="section-header">
+
+            <h2>📦 Catálogo</h2>
+
+            <div class="catalogo-filtros">
+
+                <input type="text"
+                       id="buscarCatalogo"
+                       placeholder="Buscar producto o servicio..."
+                       onkeyup="filtrarCatalogo()">
+
+            <select id="filtroCategoria"
+                onchange="filtrarCatalogo()">
+
+            <option value="">
+                Todas las categorías
+            </option>
+
+            <option value="medicina">
+                Medicinas
+            </option>
+
+            <option value="producto">
+                Productos
+            </option>
+
+            <option value="servicio">
+                Servicios
+            </option>
+
+        </select>
+
+            </div>
+
+        </div>
+
+        <div id="catalogoContainer"></div>
+
+    </div>
+
+    <!-- DETALLE -->
+    <div class="cotizacion-section">
+
+        <div class="section-header">
+
+            <h2>🛒 Detalle de Cotización</h2>
+
+            <!-- BOTON EDITAR -->
+            <button id="btnEditarCotizacion"
+                    class="btn-warning"
+                    onclick="guardarCotizacion()"
+                    style="display:none;">
+
+                ✏️ Guardar Cambios
+
+            </button>
+
+        </div>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Item</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="detalleCotizacion"></tbody>
+
+            </table>
+
+        </div>
+
+        <div class="total-box">
+
+            <h2 id="totalCotizacion">
+                Total: $0
+            </h2>
+
+        </div>
+
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="historial-section">
+
+        <div class="section-header">
+
+            <h2>📄 Historial de Cotizaciones</h2>
+
+        </div>
+
+        <div id="listaCotizaciones"></div>
+
+    </div>
 
 </div>
-
-<h2>📦 Catálogo</h2>
-
-<div id="catalogoContainer"></div>
-
-<h2>🛒 Cotización</h2>
-
-<table>
-
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Subtotal</th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody id="detalleCotizacion"></tbody>
-
-</table>
-
-<h2 id="totalCotizacion">
-    Total: $0
-</h2>
-<h2>📄 Historial Cotizaciones</h2>
-
-<div id="listaCotizaciones"></div>
 
 <script src="cotizaciones.js"></script>
 

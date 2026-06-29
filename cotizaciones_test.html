@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Cotizaciones - Vetlia</title>
+
+  <style>
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #faf9f7;
+    --primary: #2d6a4f;
+    --primary-dark: #1b4332;
+    --primary-light: #d8f3dc;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e0d8;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--primary-dark);
+    color: white;
+    padding: 0 28px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(27,67,50,0.3);
+  }
+
+  .header-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-sub {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    margin-left: 4px;
+  }
+
+  .header-back {
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .header-back:hover { background: rgba(255,255,255,0.22); }
+
+  /* ── PAGE ── */
+  .page {
+    padding: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .panel-title-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── FORM / INPUTS ── */
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+  .btn-warning { background: #fffbeb; color: var(--warning); border: 1.5px solid #fde68a; }
+  .btn-warning:hover { background: var(--warning); color: white; }
+
+  .btn-danger { background: #fef2f2; color: var(--danger); border: 1.5px solid #fecaca; }
+  .btn-danger:hover { background: var(--danger); color: white; }
+
+  .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--border); color: var(--text); }
+
+  .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+  /* ── CATÁLOGO FILTROS ── */
+  .catalogo-filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .catalogo-filtros input  { width: 220px; }
+  .catalogo-filtros select { width: 180px; }
+
+  /* ── CATÁLOGO GRID ── */
+  #catalogoContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+  }
+
+  .card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+
+  .card-no-img {
+    width: 100%;
+    height: 140px;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+  }
+
+  .card-body {
+    padding: 12px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .card-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .card-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--primary-dark);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .badge-producto { background: #dbeafe; color: #2563eb; }
+  .badge-medicina { background: #fce7f3; color: #db2777; }
+  .badge-servicio { background: #dcfce7; color: #16a34a; }
+
+  /* ── TABLA ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+
+  /* ── TOTAL ── */
+  .total-box {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  #totalCotizacion {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--primary-dark);
+  }
+
+  /* ── HISTORIAL ── */
+  .cot-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+  }
+
+  .cot-card:hover { box-shadow: var(--shadow-lg); }
+
+  .cot-info { display: flex; flex-direction: column; gap: 3px; }
+  .cot-name { font-weight: 600; font-size: 0.9rem; }
+  .cot-meta { font-size: 0.8rem; color: var(--text-muted); }
+  .cot-actions { display: flex; gap: 6px; }
+
+  /* estado badges */
+  .badge-pendiente  { background: #fef9c3; color: #854d0e; }
+  .badge-aprobada   { background: #dcfce7; color: #166534; }
+  .badge-rechazada  { background: #fee2e2; color: #991b1b; }
+
+  /* ── EMPTY ── */
+  .empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  .empty-icon { font-size: 2.2rem; margin-bottom: 8px; }
+
+  /* ── ANIMACIÓN ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page { animation: fadeIn 0.25s ease; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .page { padding: 14px; }
+    .catalogo-filtros input,
+    .catalogo-filtros select { width: 100%; }
+    #catalogoContainer { grid-template-columns: 1fr 1fr; }
+  }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    🐾 <span>Vetlia</span>
+    <span class="header-sub">/ Cotizaciones</span>
+  </div>
+  <button class="header-back" onclick="history.back()">← Volver</button>
+</div>
+
+<div class="page">
+
+  <!-- ── FILTROS ── -->
+  <div class="panel">
+    <div class="panel-title">
+      <div class="panel-title-left">🔎 Filtros</div>
+      <button class="btn btn-primary" onclick="guardarCotizacion()">💾 Guardar Cotización</button>
+    </div>
+
+    <div class="filters-grid">
+
+      <div class="form-group">
+        <label>👤 Tutor</label>
+        <select id="cot_tutor" onchange="cargarMascotasPorTutor()">
+          <option value="">Seleccionar tutor</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>🐶 Mascota</label>
+        <select id="cot_mascota" onchange="cargarCotizaciones()">
+          <option value="">Seleccionar mascota</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>📌 Estado</label>
+        <select id="cot_estado">
+          <option value="pendiente">Pendiente</option>
+          <option value="aprobada">Aprobada</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CATÁLOGO ── -->
+  <div class="panel">
+    <div class="panel-title">
+      <div class="panel-title-left">📦 Catálogo</div>
+      <div class="catalogo-filtros">
+        <input type="text"
+               id="buscarCatalogo"
+               placeholder="🔍 Buscar producto o servicio..."
+               onkeyup="filtrarCatalogo()">
+        <select id="filtroCategoria" onchange="filtrarCatalogo()">
+          <option value="">Todas las categorías</option>
+          <option value="medicina">Medicinas</option>
+          <option value="producto">Productos</option>
+          <option value="servicio">Servicios</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="catalogoContainer"></div>
+  </div>
+
+  <!-- ── DETALLE COTIZACIÓN ── -->
+  <div class="panel">
+    <div class="panel-title">
+      <div class="panel-title-left">🛒 Detalle de Cotización</div>
+      <button id="btnEditarCotizacion"
+              class="btn btn-warning"
+              onclick="guardarCotizacion()"
+              style="display:none;">
+        ✏️ Guardar Cambios
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ítem</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="detalleCotizacion"></tbody>
+      </table>
+    </div>
+
+    <div class="total-box">
+      <h2 id="totalCotizacion">Total: $0</h2>
+    </div>
+  </div>
+
+  <!-- ── HISTORIAL ── -->
+  <div class="panel">
+    <div class="panel-title">
+      <div class="panel-title-left">📄 Historial de Cotizaciones</div>
+    </div>
+    <div id="listaCotizaciones"></div>
+  </div>
+
+</div>
+
+<script src="cotizaciones.js"></script>
+</body>
+</html>

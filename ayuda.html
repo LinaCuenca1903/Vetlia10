@@ -2,594 +2,672 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Centro de Ayuda</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<title>Centro de Ayuda - Vetlia</title>
 
 <style>
-
-/* RESET */
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --surface2: #faf9f7;
+  --primary: #2d6a4f;
+  --primary-dark: #1b4332;
+  --primary-light: #d8f3dc;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --border: #e5e0d8;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
 }
 
-/* BODY */
-body{
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#4facfe,#00f2fe);
-  min-height:100vh;
-  padding:40px 20px;
-  text-align:center;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
 
-/* TITULO */
-h2{
-  color:white;
-  font-size:34px;
-  margin-bottom:10px;
-  animation:fadeIn .6s ease;
+/* ── HEADER ── */
+.header {
+  background: var(--primary-dark);
+  color: white;
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(27,67,50,0.3);
 }
 
-.subtitle{
-  color:rgba(255,255,255,.9);
-  margin-bottom:35px;
-  font-size:15px;
+.header-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* BUSCADOR */
-.search-box{
-  margin-bottom:35px;
+.header-sub {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  margin-left: 4px;
 }
 
-input[type="text"]{
-  width:60%;
-  max-width:550px;
-  padding:14px 20px;
-  border:none;
-  border-radius:30px;
-  font-size:15px;
-  outline:none;
-  transition:.3s;
-  box-shadow:0 5px 15px rgba(0,0,0,.15);
+.header-back {
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+}
+.header-back:hover { background: rgba(255,255,255,0.22); }
+
+/* ── HERO ── */
+.hero {
+  background: var(--primary-dark);
+  padding: 40px 28px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-input[type="text"]:focus{
-  transform:scale(1.02);
-  box-shadow:0 5px 20px rgba(255,255,255,.4);
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 40px;
+  background: var(--bg);
+  border-radius: 40px 40px 0 0;
 }
 
-/* FAQ */
-.faq-item{
-  background:white;
-  margin:18px auto;
-  padding:20px;
-  border-radius:18px;
-  max-width:850px;
-  text-align:left;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-  transition:.3s;
-  animation:fadeIn .5s ease;
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 6px;
+  animation: fadeIn 0.5s ease;
 }
 
-.faq-item:hover{
-  transform:translateY(-3px);
+.hero-sub {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  animation: fadeIn 0.6s ease;
 }
 
-/* QUESTION */
-.question{
-  font-weight:700;
-  font-size:16px;
-  cursor:pointer;
-  position:relative;
-  color:#333;
-  padding-right:30px;
+/* ── BUSCADOR ── */
+.search-wrap {
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 0.7s ease;
+  position: relative;
+  z-index: 1;
 }
 
-.question::after{
-  content:"▼";
-  position:absolute;
-  right:0;
-  top:0;
-  transition:.3s;
-  font-size:12px;
-  color:#4facfe;
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 10px 18px;
+  width: 100%;
+  max-width: 540px;
+  box-shadow: var(--shadow-lg);
 }
 
-/* ANSWER */
-.answer{
-  max-height:0;
-  overflow:hidden;
-  transition:max-height .4s ease,padding .3s ease;
-  color:#555;
-  line-height:1.7;
+.search-box span { font-size: 1rem; color: var(--text-muted); }
+
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  width: 100%;
 }
 
-.answer ul{
-  padding-left:20px;
-  margin-top:10px;
+/* ── PAGE ── */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
 }
 
-.answer li{
-  margin-bottom:10px;
-  line-height:1.6;
+/* ── SECCIÓN TÍTULO ── */
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin: 28px 0 12px;
 }
 
-.faq-item.active .answer{
-  max-height:1200px;
-  padding-top:15px;
+/* ── FAQ ITEM ── */
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  animation: fadeIn 0.4s ease;
 }
 
-.faq-item.active .question::after{
-  transform:rotate(180deg);
+.faq-item:hover { box-shadow: var(--shadow-lg); }
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text);
+  gap: 12px;
+  user-select: none;
 }
 
-/* IFRAME */
-iframe{
-  width:100%;
-  height:500px;
-  border:none;
-  border-radius:15px;
-  margin-top:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,.1);
+.question-text { flex: 1; }
+
+.question-arrow {
+  font-size: 0.7rem;
+  color: var(--primary);
+  transition: transform 0.3s;
+  flex-shrink: 0;
 }
 
-/* LINKS */
-.answer a{
-  display:inline-block;
-  margin-top:15px;
-  background:#4facfe;
-  color:white;
-  padding:10px 18px;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:600;
-  transition:.3s;
+.faq-item.active .question-arrow {
+  transform: rotate(180deg);
 }
 
-.answer a:hover{
-  background:#2196f3;
-  transform:translateY(-2px);
+.faq-item.active .question {
+  color: var(--primary-dark);
+  border-bottom: 1px solid var(--border);
 }
 
-/* LOGO */
-.logo{
-  margin-top:40px;
-  width:85px;
-  height:85px;
-  border-radius:50%;
-  box-shadow:0 10px 20px rgba(0,0,0,.2);
-  animation:float 3s infinite ease-in-out;
+/* ── ANSWER ── */
+.answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.7;
 }
 
-/* ANIMACIONES */
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+.faq-item.active .answer {
+  max-height: 2000px;
+  padding: 16px 20px 20px;
 }
 
-@keyframes float{
-  0%{
-    transform:translateY(0);
-  }
-  50%{
-    transform:translateY(-6px);
-  }
-  100%{
-    transform:translateY(0);
-  }
+.answer ul {
+  padding-left: 18px;
+  margin-top: 8px;
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-
-  input[type="text"]{
-    width:90%;
-  }
-
-  .faq-item{
-    padding:18px;
-  }
-
-  iframe{
-    height:350px;
-  }
-
+.answer li {
+  margin-bottom: 8px;
+  line-height: 1.6;
 }
 
+.answer p { margin-top: 8px; }
+
+/* FAQs anidados dentro de answer */
+.answer .faq-item {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+/* ── IFRAME ── */
+iframe {
+  width: 100%;
+  height: 480px;
+  border: none;
+  border-radius: var(--radius-sm);
+  margin-top: 12px;
+  box-shadow: var(--shadow);
+}
+
+/* ── LINK DESCARGA ── */
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1.5px solid #b7e4c7;
+  transition: all 0.2s;
+}
+
+.download-link:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* ── CONTACTO ── */
+.contact-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+
+.contact-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contact-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.contact-detail {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* ── EMPTY (search) ── */
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  display: none;
+}
+
+/* ── ANIMACIONES ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero-title { font-size: 1.5rem; }
+  .page { padding: 16px 14px 40px; }
+  iframe { height: 320px; }
+}
 </style>
 </head>
 
 <body>
 
-<h2>Centro de Ayuda</h2>
-<p class="subtitle">
-  Centro de soporte y manuales Vetlia 🐾
-</p>
-
-<div class="search-box">
-  <input type="text" id="buscador" placeholder="🔍 Buscar una pregunta..." onkeyup="filtrarPreguntas()">
-</div>
-
-<!-- FAQ 1 -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">¿Cómo restablecer mi contraseña?</div>
-  <div class="answer">
-    Ve al inicio de sesión, haz clic en "¿Olvidaste tu contraseña?" recibe tu correo y sigue los pasos.
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    🐾 <span>Vetlia</span>
+    <span class="header-sub">/ Ayuda</span>
   </div>
+  <button class="header-back" onclick="history.back()">← Volver</button>
 </div>
-<!-- FAQ 1 -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">¿Cómo registrar un nuevo usuario? Admin</div>
-  <div class="answer">
-    Ve a usuarios en el dashboard y llena los datos. 
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-title">Centro de Ayuda 🐾</div>
+  <div class="hero-sub">Soporte, manuales y preguntas frecuentes de Vetlia</div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="buscador" placeholder="Buscar una pregunta..." onkeyup="filtrarPreguntas()">
+    </div>
   </div>
 </div>
 
-<!-- FAQ 2 -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">🔐 ¿Cómo crear una contraseña segura? Admin</div>
-  <div class="answer">
-    Tu contraseña debe:
+<!-- PAGE -->
+<div class="page">
 
-Tener mínimo 8 caracteres (recomendado 12 o más).
-Incluir al menos:
-1 letra mayúscula (A–Z)
-1 letra minúscula (a–z)
-1 número (0–9)
-1 carácter especial (! @ # $ % & * ?)
-No contener tu nombre, apellido o correo.
-No ser una contraseña común (ej: 123456, password, admin123).
-  </div>
-</div>
-
-<!-- FAQ 3 -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">¿Cómo obtengo soporte con mi inicio de sesion?</div>
-  <div class="answer">
-    Puedes escribir a soporteclientmerge@gmail.com o llamar al numero 3013340793.
-  </div>
-</div>
-
-<!-- FAQ 3 -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">Solución a problemas comunes Vetlia.</div>
-  <div class="answer">
-    <!-- 🔐 LOGIN -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🔐 No puedo iniciar sesión
-
+  <div class="no-results" id="noResults">
+    <div style="font-size:2rem;margin-bottom:8px">🔍</div>
+    No se encontraron resultados para tu búsqueda.
   </div>
 
-  <div class="answer">
+  <!-- ── CUENTA Y ACCESO ── -->
+  <div class="section-label">Cuenta y acceso</div>
 
-    <ul>
-      <li>Verifica que el correo y contraseña sean correctos.</li>
-      <li>Revisa si tienes activada la tecla Bloq Mayús.</li>
-      <li>Usa “¿Olvidaste tu contraseña?” si no recuerdas tu acceso.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">¿Cómo restablecer mi contraseña?</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      Ve al inicio de sesión, haz clic en "¿Olvidaste tu contraseña?", recibe el correo y sigue los pasos indicados.
+    </div>
   </div>
 
-</div>
-
-
-<!-- 📅 CITAS -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    📅 La cita no aparece registrada
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">¿Cómo registrar un nuevo usuario? (Admin)</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      Ve a <b>Usuarios</b> en el dashboard de administrador y completa el formulario con nombre, correo, contraseña y rol.
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Verifica que hayas seleccionado una mascota.</li>
-      <li>Confirma que la fecha y hora estén disponibles.</li>
-      <li>Actualiza la página e intenta nuevamente.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🔐 ¿Cómo crear una contraseña segura?</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      Tu contraseña debe:
+      <ul>
+        <li>Tener mínimo 8 caracteres (recomendado 12 o más).</li>
+        <li>Incluir al menos 1 letra mayúscula (A–Z).</li>
+        <li>Incluir al menos 1 letra minúscula (a–z).</li>
+        <li>Incluir al menos 1 número (0–9).</li>
+        <li>Incluir al menos 1 carácter especial (! @ # $ % & * ?).</li>
+        <li>No contener tu nombre, apellido o correo.</li>
+        <li>No ser una contraseña común (ej: 123456, password, admin123).</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 🐾 PACIENTES -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🐾 No aparecen pacientes o tutores
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">¿Cómo obtengo soporte con mi inicio de sesión?</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      Puedes escribir a <b>soporteclientmerge@gmail.com</b> o llamar al número <b>3013340793</b>.
+    </div>
   </div>
 
-  <div class="answer">
+  <!-- ── PROBLEMAS COMUNES ── -->
+  <div class="section-label">Solución a problemas comunes</div>
 
-    <ul>
-      <li>Revisa que el paciente haya sido guardado correctamente.</li>
-      <li>Comprueba conexión con la base de datos.</li>
-      <li>Actualiza la lista usando el botón “Ver”.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🔐 No puedo iniciar sesión</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica que el correo y contraseña sean correctos.</li>
+        <li>Revisa si tienes activada la tecla Bloq Mayús.</li>
+        <li>Usa "¿Olvidaste tu contraseña?" si no recuerdas tu acceso.</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 🧾 COTIZACIONES -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🧾 La cotización no se guarda
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📅 La cita no aparece registrada</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica que hayas seleccionado una mascota.</li>
+        <li>Confirma que la fecha y hora estén disponibles.</li>
+        <li>Actualiza la página e intenta nuevamente.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Debes seleccionar una mascota.</li>
-      <li>Debe existir al menos un producto o servicio agregado.</li>
-      <li>Verifica que el usuario tenga sesión iniciada.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🐾 No aparecen pacientes o tutores</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Revisa que el paciente haya sido guardado correctamente.</li>
+        <li>Comprueba la conexión con la base de datos.</li>
+        <li>Actualiza la lista usando el botón "Ver".</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 📄 PDF -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    📄 El PDF no descarga
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🧾 La cotización no se guarda</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Debes seleccionar una mascota.</li>
+        <li>Debe existir al menos un producto o servicio agregado.</li>
+        <li>Verifica que el usuario tenga sesión iniciada.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Verifica que la carpeta fpdf exista dentro del proyecto.</li>
-      <li>Comprueba que el navegador no bloquee ventanas emergentes.</li>
-      <li>Revisa que la cotización exista en la base de datos.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📄 El PDF no descarga</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica que la carpeta <b>fpdf</b> exista dentro del proyecto.</li>
+        <li>Comprueba que el navegador no bloquee ventanas emergentes.</li>
+        <li>Revisa que la cotización exista en la base de datos.</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 💊 IMAGENES -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    💊 El catálogo no muestra imágenes
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">💊 El catálogo no muestra imágenes</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica que las imágenes estén dentro de la carpeta <b>uploads</b>.</li>
+        <li>Comprueba los permisos de la carpeta.</li>
+        <li>Asegúrate de cargar imágenes en formatos válidos (jpg, png, webp).</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Verifica que las imágenes estén dentro de uploads.</li>
-      <li>Comprueba permisos de la carpeta.</li>
-      <li>Asegúrate de cargar imágenes válidas.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📧 El correo no se envía</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica la configuración SMTP.</li>
+        <li>Revisa usuario y contraseña del correo configurado.</li>
+        <li>Comprueba la conexión a internet del servidor.</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 📧 CORREOS -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    📧 El correo no se envía
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">⚠️ Error de conexión con la base de datos</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Verifica que XAMPP esté encendido.</li>
+        <li>Comprueba que MySQL esté iniciado.</li>
+        <li>Revisa el nombre de la base de datos y las credenciales en el archivo de conexión.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Verifica configuración SMTP.</li>
-      <li>Revisa usuario y contraseña del correo.</li>
-      <li>Comprueba conexión a internet.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🖥️ El sistema carga lento</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Pueden existir demasiados registros cargados a la vez.</li>
+        <li>Verifica la velocidad de conexión de red.</li>
+        <li>Limpia la caché del navegador (Ctrl + Shift + Delete).</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- ⚠ DB -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    ⚠ Error de conexión con la base de datos
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🔄 Los cambios no se reflejan</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Presiona <b>Ctrl + F5</b> para forzar recarga.</li>
+        <li>Limpia la caché del navegador.</li>
+        <li>Verifica que estés editando el archivo correcto.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Verifica que XAMPP esté encendido.</li>
-      <li>Comprueba que MySQL esté iniciado.</li>
-      <li>Revisa nombre de la base de datos y credenciales.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">👨‍⚕️ Problemas de permisos o roles</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Algunos módulos son exclusivos del administrador.</li>
+        <li>Verifica el rol del usuario en la base de datos.</li>
+      </ul>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 🖥 LENTO -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🖥 El sistema carga lento
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">🐶 Error al crear historias clínicas</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <ul>
+        <li>Debe existir una mascota registrada previamente.</li>
+        <li>Completa todos los campos obligatorios.</li>
+        <li>Verifica la conexión con el servidor.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="answer">
+  <!-- ── MANUALES ── -->
+  <div class="section-label">Manuales y documentación</div>
 
-    <ul>
-      <li>Pueden existir demasiados registros cargados.</li>
-      <li>Verifica conexión de red.</li>
-      <li>Limpia caché del navegador.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📄 Manual de Usuario (PDF)</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <iframe src="Manual de usuario Client Merge.pdf"></iframe>
+      <a href="Manual de usuario Client Merge.pdf" target="_blank" class="download-link">⬇️ Descargar Manual de Usuario</a>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 🔄 CAMBIOS -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🔄 Los cambios no se reflejan
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📄 Manual de Instalación (PDF)</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <iframe src="Manual de instalacion.pdf"></iframe>
+      <a href="Manual de instalacion.pdf" target="_blank" class="download-link">⬇️ Descargar Manual de Instalación</a>
+    </div>
   </div>
 
-  <div class="answer">
-
-    <ul>
-      <li>Presiona Ctrl + F5.</li>
-      <li>Limpia caché del navegador.</li>
-      <li>Verifica que estés editando el archivo correcto.</li>
-    </ul>
-
+  <div class="faq-item">
+    <div class="question" onclick="toggleAnswer(this)">
+      <span class="question-text">📄 Manual Técnico (PDF)</span>
+      <span class="question-arrow">▼</span>
+    </div>
+    <div class="answer">
+      <iframe src="Manual tecnico.pdf"></iframe>
+      <a href="Manual tecnico.pdf" target="_blank" class="download-link">⬇️ Descargar Manual Técnico</a>
+    </div>
   </div>
 
-</div>
-
-
-<!-- 👨‍⚕️ ROLES -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    👨‍⚕️ Problemas de permisos o roles
-
-  </div>
-
-  <div class="answer">
-
-    <ul>
-      <li>Algunos módulos son exclusivos del administrador.</li>
-      <li>Verifica el rol del usuario en la base de datos.</li>
-    </ul>
-
+  <!-- ── CONTACTO ── -->
+  <div class="contact-box">
+    <div class="contact-icon">📞</div>
+    <div class="contact-info">
+      <div class="contact-title">¿Necesitas más ayuda?</div>
+      <div class="contact-detail">📧 soporteclientmerge@gmail.com</div>
+      <div class="contact-detail">📱 3013340793</div>
+    </div>
   </div>
 
 </div>
 
-
-<!-- 🐶 HISTORIAS -->
-<div class="faq-item">
-
-  <div class="question"
-       onclick="toggleAnswer(this)">
-
-    🐶 Error al crear historias clínicas
-
-  </div>
-
-  <div class="answer">
-
-    <ul>
-      <li>Debe existir una mascota registrada.</li>
-      <li>Completa los campos obligatorios.</li>
-      <li>Verifica conexión con el servidor.</li>
-    </ul>
-
-  </div>
-
-</div>
-
-
-  </div>
-</div>
-
-<!-- MANUAL USUARIO -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">📄 Manual de Usuario (PDF)</div>
-  <div class="answer">
-    <iframe src="Manual de usuario Client Merge.pdf"></iframe>
-    <p style="margin-top:10px;">
-      👉 <a href="Manual de usuario Client Merge.pdf" target="_blank">Descargar Manual</a>
-    </p>
-  </div>
-</div>
-
-<!-- MANUAL INSTALACION -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">📄 Manual de Instalación (PDF)</div>
-  <div class="answer">
-    <iframe src="Manual de instalacion.pdf"></iframe>
-    <p style="margin-top:10px;">
-      👉 <a href="Manual de instalacion.pdf" target="_blank">Descargar Manual</a>
-    </p>
-  </div>
-</div>
-
-<!-- MANUAL TECNICO -->
-<div class="faq-item">
-  <div class="question" onclick="toggleAnswer(this)">📄 Manual Técnico (PDF)</div>
-  <div class="answer">
-    <iframe src="Manual tecnico.pdf"></iframe>
-    <p style="margin-top:10px;">
-      👉 <a href="Manual tecnico.pdf" target="_blank">Descargar Manual</a>
-    </p>
-  </div>
-</div>
-
+<footer>© 2026 Vetlia 🐾 — Sistema de gestión veterinaria</footer>
 
 <script>
-
-function toggleAnswer(element){
+function toggleAnswer(element) {
   const item = element.parentElement;
   item.classList.toggle("active");
 }
 
-function filtrarPreguntas(){
-  const input = document.getElementById("buscador").value.toLowerCase();
-  const faqs = document.getElementsByClassName("faq-item");
+function filtrarPreguntas() {
+  const input   = document.getElementById("buscador").value.toLowerCase();
+  const faqs    = document.querySelectorAll(".page > .faq-item");
+  const noRes   = document.getElementById("noResults");
+  let   visible = 0;
 
-  for(let i=0;i<faqs.length;i++){
-    const pregunta = faqs[i].getElementsByClassName("question")[0]
-                      .textContent.toLowerCase();
-    faqs[i].style.display = pregunta.includes(input) ? "block" : "none";
-  }
+  faqs.forEach(faq => {
+    const texto = faq.querySelector(".question-text").textContent.toLowerCase();
+    if (texto.includes(input)) {
+      faq.style.display = "block";
+      visible++;
+    } else {
+      faq.style.display = "none";
+    }
+  });
+
+  noRes.style.display = visible === 0 && input !== "" ? "block" : "none";
 }
-
 </script>
 
 </body>

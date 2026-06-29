@@ -2,7 +2,7 @@
 $conn = new mysqli("localhost", "root", "", "veterinaria");
 
 $sql = "SELECT 
-          p.id, p.nombre, p.especie, p.raza, p.edad,
+          p.id, p.nombre, p.especie, p.raza, p.edad,p.tutor_id,
           t.nombre AS tutor_nombre, t.telefono
         FROM mascotas p
         JOIN tutores t ON p.tutor_id = t.id";

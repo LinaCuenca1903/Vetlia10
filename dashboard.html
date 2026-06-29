@@ -261,8 +261,8 @@ button:hover { background:#1e3c72; }
 
 // 🔐 sesión
 const user = JSON.parse(localStorage.getItem("user"));
-if(!user) location="login_test.html";
-if(user.rol !== "admin"){ alert("No autorizado"); location="login_test.html"; }
+if(!user) location="login_vet.html";
+if(user.rol !== "admin"){ alert("No autorizado"); location="login_vet.html"; }
 
 titulo.innerText = "Bienvenido " + user.nombre;
 
@@ -716,7 +716,7 @@ cargarPacientes();
 
 // ================= GENERAL =================
 function cerrarModal(id){ document.getElementById(id).style.display="none"; }
-function logout(){ localStorage.removeItem("user"); location="login_test.html"; }
+function logout(){ localStorage.removeItem("user"); location="login_vet.html"; }
 
 // ================= CITAS =================
 

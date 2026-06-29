@@ -2,6 +2,12 @@
 
 let carrito = [];
 
+let cotizacionEditando = null;
+
+let catalogoCompleto = [];
+
+
+
 async function cargarMascotas(){
 
     let r = await fetch(
@@ -24,6 +30,71 @@ async function cargarMascotas(){
 }
 
 
+
+async function cargarTutores(){
+
+    let r = await fetch(
+      "http://localhost/vetlia/get_tutores.php"
+    );
+
+    let data = await r.json();
+
+    cot_tutor.innerHTML = `
+        <option value="">
+            Seleccionar tutor
+        </option>
+    `;
+
+    data.forEach(t => {
+
+        cot_tutor.innerHTML += `
+            <option value="${t.id}">
+                ${t.nombre}
+            </option>
+        `;
+
+    });
+
+}
+
+
+
+async function cargarMascotasPorTutor(){
+
+    let tutorId = cot_tutor.value;
+
+    let r = await fetch(
+      "http://localhost/vetlia/get_pacientes.php"
+    );
+
+    let data = await r.json();
+
+    cot_mascota.innerHTML =
+    `<option value="">Seleccionar mascota</option>`;
+
+    listaCotizaciones.innerHTML = "";
+
+    data.forEach(m => {
+
+        if(
+            tutorId == ""
+            ||
+            m.tutor_id == tutorId
+        ){
+
+            cot_mascota.innerHTML += `
+                <option value="${m.id}">
+                    ${m.nombre}
+                </option>
+            `;
+        }
+
+    });
+
+}
+
+
+
 async function cargarCatalogo(){
 
     let r = await fetch(
@@ -32,59 +103,129 @@ async function cargarCatalogo(){
 
     let data = await r.json();
 
+    console.log(data);
+
+    catalogoCompleto = data;
+
+    renderCatalogo(data);
+}
+
+
+
+function renderCatalogo(data){
+
     catalogoContainer.innerHTML = "";
 
     data.forEach(item => {
 
+        let tipo =
+        String(item.tipo)
+        .toLowerCase()
+        .trim();
+
         let icono = "📦";
 
-        if(item.tipo == "medicina"){
+        if(tipo.includes("medicina")){
             icono = "💊";
         }
 
-        if(item.tipo == "servicio"){
+        if(tipo.includes("servicio")){
             icono = "🩺";
         }
 
-        catalogoContainer.innerHTML += `
+        if(tipo.includes("producto")){
+            icono = "🛍️";
+        }
 
-            <div class="card">
+        let nombreSeguro =
+item.nombre.replace(/'/g, "\\'");
 
-                ${
-                    item.imagen
-                    ?
-                    `<img src="uploads/${item.imagen}">`
-                    :
-                    `<div style="font-size:80px">${icono}</div>`
-                }
+catalogoContainer.innerHTML += `
 
-                <h3>${item.nombre}</h3>
+    <div class="card">
 
-                <p>${item.tipo}</p>
+        ${
+            item.imagen
+            ?
+            `<img src="uploads/${item.imagen}">`
+            :
+            `<div style="font-size:80px">${icono}</div>`
+        }
 
-                <p>$ ${item.precio}</p>
+        <h3>${item.nombre}</h3>
 
-                <input
-                    type="number"
-                    id="cantidad_${item.id}"
-                    min="1"
-                    value="1"
-                >
+        <p>${item.tipo}</p>
 
-                <button onclick="agregarItem(
-                    ${item.id},
-                    '${item.nombre}',
-                    ${item.precio}
-                )">
+        <p>$ ${item.precio}</p>
 
-                    Agregar
+        <input
+            type="number"
+            id="cantidad_${item.id}"
+            min="1"
+            value="1"
+        >
 
-                </button>
+        <button onclick="agregarItem(
+            ${item.id},
+            '${nombreSeguro}',
+            ${item.precio}
+        )">
 
-            </div>
+            Agregar
+
+        </button>
+
+    </div>
+
         `;
     });
 }
+
+
+
+function filtrarCatalogo(){
+
+    let texto =
+    document.getElementById(
+        "buscarCatalogo"
+    ).value.toLowerCase().trim();
+
+    let categoria =
+    document.getElementById(
+        "filtroCategoria"
+    ).value.toLowerCase().trim();
+
+    let filtrados = catalogoCompleto.filter(item => {
+
+        let nombre =
+        String(item.nombre)
+        .toLowerCase()
+        .trim();
+
+        let tipo =
+        String(item.tipo)
+        .toLowerCase()
+        .trim();
+
+        let coincideTexto =
+        nombre.includes(texto);
+
+        let coincideCategoria =
+        categoria === ""
+        ||
+        tipo.includes(categoria);
+
+        return coincideTexto
+        &&
+        coincideCategoria;
+
+    });
+
+    console.log(filtrados);
+
+    renderCatalogo(filtrados);
+}
+
 
 
 function agregarItem(id,nombre,precio){
@@ -99,15 +240,18 @@ function agregarItem(id,nombre,precio){
     let subtotal = cantidad * precio;
 
     carrito.push({
+
         catalogo_id:id,
         nombre:nombre,
         precio:precio,
         cantidad:cantidad,
         subtotal:subtotal
+
     });
 
     renderCarrito();
 }
+
 
 
 function renderCarrito(){
@@ -126,7 +270,16 @@ function renderCarrito(){
 
                 <td>${item.nombre}</td>
 
-                <td>${item.cantidad}</td>
+                <td>
+
+                    <input
+                        type="number"
+                        min="1"
+                        value="${item.cantidad}"
+                        onchange="editarCantidad(${index},this.value)"
+                    >
+
+                </td>
 
                 <td>$ ${item.precio}</td>
 
@@ -149,12 +302,28 @@ function renderCarrito(){
 }
 
 
+
+function editarCantidad(index,nuevaCantidad){
+
+    nuevaCantidad = parseInt(nuevaCantidad);
+
+    carrito[index].cantidad = nuevaCantidad;
+
+    carrito[index].subtotal =
+    nuevaCantidad * carrito[index].precio;
+
+    renderCarrito();
+}
+
+
+
 function eliminarItem(index){
 
     carrito.splice(index,1);
 
     renderCarrito();
 }
+
 
 
 async function guardarCotizacion(){
@@ -182,44 +351,81 @@ async function guardarCotizacion(){
         total += i.subtotal;
     });
 
+    let url =
+    cotizacionEditando
+    ?
+    "http://localhost/vetlia/editar_cotizacion_vet.php"
+    :
+    "http://localhost/vetlia/crear_cotizacion.php";
+
+    let bodyData = {
+
+        mascota_id:cot_mascota.value,
+
+        usuario_id:user.id,
+
+        estado:cot_estado.value,
+
+        total:total,
+
+        items:carrito
+    };
+
+    if(cotizacionEditando){
+
+        bodyData.id = cotizacionEditando;
+
+    }
+
     let r = await fetch(
-      "http://localhost/vetlia/crear_cotizacion.php",
+
+      url,
+
       {
         method:"POST",
+
         headers:{
             "Content-Type":"application/json"
         },
-        body:JSON.stringify({
 
-            mascota_id:cot_mascota.value,
-
-            usuario_id:user.id,
-            
-            estado:cot_estado.value,
-
-            total:total,
-
-            items:carrito
-        })
+        body:JSON.stringify(bodyData)
       }
+
     );
 
     let data = await r.json();
 
-    console.log(data);
-
     if(data.success){
 
-        alert("Cotización guardada");
+        alert(
 
-        // LIMPIAR
+            cotizacionEditando
+            ?
+            "Cotización modificada"
+            :
+            "Cotización guardada"
+
+        );
+
         carrito = [];
 
         renderCarrito();
 
         cot_mascota.value = "";
 
-        // LIMPIAR CANTIDADES
+        cotizacionEditando = null;
+
+        let btnEditar =
+        document.getElementById(
+            "btnEditarCotizacion"
+        );
+
+        if(btnEditar){
+
+            btnEditar.style.display = "none";
+
+        }
+
         document
         .querySelectorAll("input[type='number']")
         .forEach(i => {
@@ -229,6 +435,8 @@ async function guardarCotizacion(){
         cargarCotizaciones();
     }
 }
+
+
 
 async function cargarCotizaciones(){
 
@@ -272,6 +480,12 @@ async function cargarCotizaciones(){
                     Estado: ${c.estado}
                 </p>
 
+                <button onclick="visualizarCotizacion(${c.id})">
+
+                    Ver / Modificar
+
+                </button>
+
                 <button onclick="descargarPDF(${c.id})">
 
                     PDF
@@ -279,22 +493,113 @@ async function cargarCotizaciones(){
                 </button>
 
                 <input
-           type="email"
-           id="correo_${c.id}"
-           placeholder="Correo"
-        >
+                    type="email"
+                    id="correo_${c.id}"
+                    placeholder="Correo"
+                >
 
-        <button onclick="enviarCorreo(${c.id})">
+                <button onclick="enviarCorreo(${c.id})">
 
-            Enviar PDF
+                    Enviar PDF
 
-        </button>
-
+                </button>
 
             </div>
         `;
     });
 }
+
+
+
+async function visualizarCotizacion(id){
+
+    cotizacionEditando = id;
+
+    // MOSTRAR BOTON EDITAR
+    let btnEditar =
+    document.getElementById(
+        "btnEditarCotizacion"
+    );
+
+    if(btnEditar){
+
+        btnEditar.style.display =
+        "inline-block";
+
+    }
+
+    // CONSULTAR DETALLE
+    let r = await fetch(
+
+      "http://localhost/vetlia/get_detalle_cotizacion_vet.php?id="
+      + id
+
+    );
+
+    let data = await r.json();
+
+    console.log(data);
+
+    // LIMPIAR CARRITO
+    carrito = [];
+
+    // AGREGAR ITEMS
+    if(data.items){
+
+        data.items.forEach(i => {
+
+            carrito.push({
+
+                catalogo_id:i.catalogo_id,
+
+                nombre:i.nombre,
+
+                precio:parseFloat(i.precio),
+
+                cantidad:parseInt(i.cantidad),
+
+                subtotal:
+                parseFloat(i.precio)
+                *
+                parseInt(i.cantidad)
+
+            });
+
+        });
+
+    }
+
+    // RENDERIZAR TABLA
+    renderCarrito();
+
+    // CARGAR ESTADO
+    if(data.estado){
+
+        cot_estado.value =
+        data.estado;
+
+    }
+
+    // CARGAR MASCOTA
+    if(data.mascota_id){
+
+        cot_mascota.value =
+        data.mascota_id;
+
+    }
+
+    // IR ARRIBA
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
 
 function descargarPDF(id){
 
@@ -304,8 +609,11 @@ function descargarPDF(id){
       + id,
 
       "_blank"
+
     );
 }
+
+
 
 async function enviarCorreo(id){
 
@@ -325,9 +633,11 @@ async function enviarCorreo(id){
       "http://localhost/vetlia/enviar_cotizacion.php",
       {
         method:"POST",
+
         headers:{
             "Content-Type":"application/json"
         },
+
         body:JSON.stringify({
             id:id,
             correo:correo
@@ -340,8 +650,12 @@ async function enviarCorreo(id){
     if(data.success){
 
         alert("Correo enviado");
+
     }
 }
 
-cargarMascotas();
+
+
+cargarTutores();
 cargarCatalogo();
+cargarMascotas();
